@@ -95,3 +95,12 @@ DESCRIBE titles;
 
 END OF EXERCISE*/
 
+USE fruits_db;
+SELECT * FROM employees.employees;
+-- Selects ALL from 'employees.employees REGARDLESS of current database
+-- The 'employees.employees' is similar to CLI 'employees/employees'
+SELECT * FROM fruits WHERE name = 'apple';
+-- Selects ALL from 'fruits' where the NAME MATCHES 'apple'
+SELECT * FROM fruits WHERE name LIKE '%apple';
+-- Selects ALL from 'fruits' where the NAME HAS 'apple'
+SELECT * FROM fruits WHERE name IN('apple', 'dragonfruit');
