@@ -33,3 +33,6 @@ Q: 4e. Which albums had less than 20 million certified sales
 A: "Abbey Road", "Bad", "Born in the U.S.A.", "Brothers in Arms", "Dangerous", "Dirty Dancing", "Grease: The Original Soundtrach from the Motion Picture", "Let's Talk About Love", "Nevermind", "Sgt. Pepper's Lonely Hearts Club Band", "The Immaculate Collection", "The Wall", "Titanic: Music from the Motion Picture"
 Q: 4f. All the albums with a genre of "Rock". Why do these query results not include albums with a genre of "Hard rock" or "Progressive rock"?
 A: "1", "Abbey Road", "Born in the U.S.A.", "Sgt. Pepper's Lonely Hearts Club Band", "Supernatural".  It does not include albums with "Hard rock" or "Progressive rock" because the query was specifically searching for "Rock".
+
+END OF EXERCISE
+*/
