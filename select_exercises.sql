@@ -10,6 +10,7 @@ SELECT genre FROM albums WHERE name='Nevermind';
 SELECT name FROM albums WHERE release_date BETWEEN 1990 and 2000;
 SELECT name FROM albums WHERE sales < 20;
 SELECT name FROM albums WHERE genre LIKE 'Rock';
+SELECT Key FROM albums;
 
 
 /* BEGIN Q & A:
@@ -18,7 +19,7 @@ A: 31
 Q: 3b. How many unique artist names are in the albums table?
 A: 31
 Q: 3c. What is the primary key for the albums table?
-A: albums
+A: id
 Q: 3d. What is the oldest release date for any album in the albums table? What is the most recent release date?
 A: Oldest: 1967 // Newest: 2011
 Q: 4a. The name of all albums by Pink Floyd
