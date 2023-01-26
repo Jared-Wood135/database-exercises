@@ -34,4 +34,4 @@ SELECT staff_id, first_name, last_name, address_id, picture, email, store_id, ac
 SELECT * FROM address LIMIT 100;
 SELECT phone, district FROM address WHERE district IN ('California', 'England', 'Taipei', 'West Java');
 SELECT * FROM payment LIMIT 5;
-SELECT payment_id, amount, payment_date FROM payment WHERE payment_date IN ('2005-05-25', '2005-05-27', '2005-05-29');
+SELECT payment_id, amount, payment_date FROM payment WHERE DATE(payment_date) IN ('2005-05-25', '2005-05-27', '2005-05-29');
