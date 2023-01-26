@@ -49,9 +49,9 @@ SELECT count(*) FROM employees WHERE last_name LIKE '%E' AND last_name LIKE 'E%'
 SELECT count(*) FROM employees WHERE last_name LIKE '%E' AND last_name LIKE 'E%' ORDER BY hire_date ASC;
 SELECT first_name, last_name, hire_date FROM employees WHERE last_name LIKE '%E' AND last_name LIKE 'E%' ORDER BY hire_date ASC;
 SELECT first_name, last_name, hire_date FROM employees WHERE last_name LIKE '%E' AND last_name LIKE 'E%' ORDER BY hire_date DESC;
-SELECT count(*) FROM employees WHERE hire_date <= '1990-01-01' AND '1999-12-31' AND hire_date LIKE '%12-25%';
-SELECT first_name, last_name, hire_date FROM employees WHERE hire_date <= '1990-01-01' AND '1999-12-31' AND hire_date LIKE '%12-25%' ORDER BY hire_date ASC;
-SELECT first_name, last_name, hire_date FROM employees WHERE hire_date <= '1990-01-01' AND '1999-12-31' AND hire_date LIKE '%12-25%' ORDER BY hire_date DESC;
+SELECT count(*) FROM employees WHERE hire_date <= '1990-01-01' AND '1999-12-31' AND birth_date LIKE '%12-25%';
+SELECT first_name, last_name, hire_date FROM employees WHERE hire_date <= '1990-01-01' AND '1999-12-31' AND birth_date LIKE '%12-25%' ORDER BY hire_date ASC;
+SELECT first_name, last_name, hire_date FROM employees WHERE hire_date <= '1990-01-01' AND '1999-12-31' AND birth_date LIKE '%12-25%' ORDER BY hire_date DESC;
 
 /*
 START EXERCISE
@@ -61,7 +61,7 @@ START EXERCISE
 4. "Irena Acton" and "Maya Zyda"
 5. "Total: 899", "First: 10021, Ramzi Erde", "Last: 499648, Tadahiro Erde"
 6. "Total: 899", "First: Teiji Eldridge", "Last: Sergi Erde"
-7. "Total: 443", "First: Stevo Cichocki", "Last: Byong Bhattacharjee"
+7. "Total: 481", "First: Alselm Cappello", "Last: Jouko Dechter"
 
 END EXERCISE
 */
