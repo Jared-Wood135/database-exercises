@@ -10,8 +10,12 @@ SELECT count(*) FROM employees WHERE last_name LIKE '%E' OR last_name LIKE 'E%';
 SELECT count(*) FROM employees WHERE last_name LIKE 'E%' AND last_name NOT LIKE '%E';
 SELECT count(*) FROM employees WHERE last_name LIKE '%E' AND last_name LIKE 'E%';
 SELECT count(*) FROM employees WHERE last_name LIKE 'E%'
-SELECT count(*) FROM employees WHERE hire_date >= '1990/01/01' AND hire_date <= '1999/12/31';
-SELECT count(*) FROM employees WHERE hire_date 
+SELECT count(*) FROM employees WHERE hire_date >= '1990-01-01' AND 
+hire_date <= '1999-12-31';
+SELECT count(*) FROM employees WHERE hire_date DAYOFMONTH = 25 AND hire_date monthname('December');
+SELECT count(*);
+SELECT count(*) FROM employees WHERE last_name LIKE '%q%';
+SELECT count(*) FROM employees WHERE last_name LIKE '%q%' AND last_name NOT LIKE '%qu%';
 
 /*
 START EXERCISE
@@ -22,8 +26,8 @@ START EXERCISE
 5. 24292
 6. 30723 // 6431
 7. 899 // 7330
-8. 
+8. 135214
 9. 
 10. 
-11. 
-12. 
+11. 1873
+12. 547
