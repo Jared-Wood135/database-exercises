@@ -12,28 +12,39 @@ SELECT substr('hello oneil class', 7, 5);
 SELECT substr(release_date, 3, 2) FROM albums;
 SELECT upper(artist), artist FROM albums;
 SELECT lower(artist), artist FROM albums;
+SELECT artist FROM albums;
+
 
 -- BREAK LINE FROM INSTRUCTION PORTION TO EXERCISE PORTION --
 
 -- Exercise 2
 SHOW DATABASES;
 USE employees;
-SELECT concat(first_name, last_name) AS full_name FROM employees WHERE last_name LIKE 'E%E';
+SHOW TABLES;
+SELECT * FROM employees LIMIT 5;
+SELECT * FROM  salaries LIMIT 5;
+SELECT concat(first_name, ' ', last_name) AS full_name FROM employees WHERE last_name LIKE 'E%E';
 
 -- Exercise 3
-SELECT concat(UPPER(first_name), UPPER(last_name)) AS full_name FROM employees WHERE last_name LIKE 'E%E';
+SELECT concat(UPPER(first_name), ' ', UPPER(last_name)) AS full_name FROM employees WHERE last_name LIKE 'E%E';
 
 -- Exercise 4
-SELECT concat(first_name, last_name) AS Employee_Name, datediff((hire_date LIKE '199%' AND birth_date LIKE '%12-25'), CURDATE()) FROM employees;
+SELECT DATEDIFF(hire_date, now()) AS DAYS_EMPLOYED FROM employees WHERE hire_date LIKE '199%' AND birth_date LIKE '%12-25'; 
 
 -- Exercise 5
-SELECT min(salaries) AS Smallest_Salaries, max(salaries) AS Largest_Salaries FROM employees;
+SELECT min(salary) AS Smallest_Salary, max(salary) AS Largest_Salary FROM salaries;
 
 -- Exercise 6
-SELECT concat(substr(lower(first_name), 1, 1), (substr(lower(last_name), 1, 4), '_', (substr(birth_date), 6, 2), (substr(birth_date), 3, 2)-- AS username
-
-/*
-
-START EXERCISES
-
-2. 
+SELECT LOWER(CONCAT(
+				(SUBSTR(first_name, 1, 1)), 
+				(SUBSTR(last_name, 1, 4)),
+				'_', 
+				(SUBSTR(birth_date, 6, 2)), 
+				(SUBSTR(birth_date, 3, 2))
+				)
+			)
+ AS username, first_name, last_name, birth_date
+ FROM employees
+ LIMIT 10;
+ 
+ -- END EXERCISE
