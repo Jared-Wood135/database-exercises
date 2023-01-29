@@ -37,9 +37,12 @@ FROM
  FROM employees
  GROUP BY username
  HAVING occur > 1) AS A;
- 
- 
- 
+
+SELECT * FROM salaries LIMIT 10;
+SELECT
+	emp_no, 
+	CONCAT(first_name, ' ', last_name) AS full_name,
+
 /*
 
 START EXERCISE
