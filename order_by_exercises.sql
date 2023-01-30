@@ -10,8 +10,7 @@ SELECT count(*) FROM employees WHERE last_name LIKE '%E' OR last_name LIKE 'E%';
 SELECT count(*) FROM employees WHERE last_name LIKE 'E%' AND last_name NOT LIKE '%E';
 SELECT count(*) FROM employees WHERE last_name LIKE '%E' AND last_name LIKE 'E%';
 SELECT count(*) FROM employees WHERE last_name LIKE 'E%'
-SELECT count(*) FROM employees WHERE hire_date >= '1990-01-01' AND 
-hire_date <= '1999-12-31';
+SELECT count(*) FROM employees WHERE hire_date >= '1990-01-01' AND hire_date <= '1999-12-31';
 SELECT count(*) FROM employees WHERE hire_date LIKE '%12-25%';
 SELECT count(*) FROM employees WHERE hire_date >= '1990-01-01' AND hire_date <= '1999-12-31' AND hire_date LIKE '%12-25%';
 SELECT count(*) FROM employees WHERE last_name LIKE '%q%';
