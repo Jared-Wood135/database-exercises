@@ -38,8 +38,9 @@ SELECT DATEDIFF(hire_date, now()) AS DAYS_EMPLOYED
     WHERE hire_date LIKE '199%' AND birth_date LIKE '%12-25'; 
 
 -- Exercise 5
-SELECT min(salary) AS Smallest_Salary, max(salary) AS Largest_Salary 
-	FROM salaries;
+SELECT emp_no, min(salary) AS Smallest_Salary, max(salary) AS Largest_Salary 
+	FROM salaries
+    GROUP BY emp_no;
 
 -- Exercise 6
 SELECT LOWER(CONCAT(
