@@ -38,11 +38,6 @@ FROM
  GROUP BY username
  HAVING occur > 1) AS A;
 
-SELECT * FROM salaries LIMIT 10;
-SELECT
-	emp_no, 
-	CONCAT(first_name, ' ', last_name) AS full_name,
-
 /*
 
 START EXERCISE
@@ -66,8 +61,36 @@ START EXERCISE
  GROUP BY username;
 9. Yes, 6, 27403
 
-BONUS:
-
-END EXERCISE
+END EXERCISE 
 
 */
+
+-- START BONUS EXERCISES: --
+
+-- Determine the historic average salary for each employee.
+SHOW DATABASES;
+USE employees;
+SHOW TABLES;
+SELECT * FROM salaries LIMIT 10;
+SELECT * FROM employees LIMIT 10; -- Link emp_no with name and salary average
+SELECT emp_no, CONCAT(first_name, ' ', last_name) AS name, AVG(salary) AS avg_salary
+	FROM employees NATURAL JOIN salaries 
+    GROUP BY emp_no, name
+    LIMIT 10;
+
+/*  Using the dept_emp table, count how many current employees work in each department.
+The query result should show 9 rows, one for each department and the employee count.  */
+
+-- Determine how many different salaries each employee has had. This includes both historic and current.
+
+--  Find the maximum salary for each employee.
+
+-- Find the minimum salary for each employee.
+
+-- Find the standard deviation of salaries for each employee.
+
+-- Now find the max salary for each employee where that max salary is greater than $150,000.
+
+-- Find the average salary for each employee where that average salary is between $80k and $90k.
+
+-- END BONUS EXERCISES: --
