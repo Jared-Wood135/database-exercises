@@ -23,16 +23,23 @@ USE employees;
 SHOW TABLES;
 SELECT * FROM employees LIMIT 5;
 SELECT * FROM  salaries LIMIT 5;
-SELECT concat(first_name, ' ', last_name) AS full_name FROM employees WHERE last_name LIKE 'E%E';
+SELECT concat(first_name, ' ', last_name) AS full_name 
+	FROM employees 
+    WHERE last_name LIKE 'E%E';
 
 -- Exercise 3
-SELECT concat(UPPER(first_name), ' ', UPPER(last_name)) AS full_name FROM employees WHERE last_name LIKE 'E%E';
+SELECT concat(UPPER(first_name), ' ', UPPER(last_name)) AS full_name 
+	FROM employees 
+	WHERE last_name LIKE 'E%E';
 
 -- Exercise 4
-SELECT DATEDIFF(hire_date, now()) AS DAYS_EMPLOYED FROM employees WHERE hire_date LIKE '199%' AND birth_date LIKE '%12-25'; 
+SELECT DATEDIFF(hire_date, now()) AS DAYS_EMPLOYED 
+	FROM employees 
+    WHERE hire_date LIKE '199%' AND birth_date LIKE '%12-25'; 
 
 -- Exercise 5
-SELECT min(salary) AS Smallest_Salary, max(salary) AS Largest_Salary FROM salaries;
+SELECT min(salary) AS Smallest_Salary, max(salary) AS Largest_Salary 
+	FROM salaries;
 
 -- Exercise 6
 SELECT LOWER(CONCAT(
