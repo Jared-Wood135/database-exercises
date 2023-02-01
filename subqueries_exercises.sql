@@ -1,8 +1,49 @@
 -- EXERCISE START --
 
 -- 1. Find all the current employees with the same hire date as employee 101010 using a subquery.
+SHOW DATABASES;
+USE employees;
+SHOW TABLES;
+/*
+employees(emp_no, hire_date)
+dept_emp(emp_no, to_date)
+*/
+SELECT * FROM employees LIMIT 10;
+SELECT * FROM dept_emp LIMIT 10;
+SELECT employees.emp_no AS emp_no, CONCAT(employees.first_name, ' ', employees.last_name) AS name, 
+	employees.hire_date AS hire_date, dept_emp.to_date AS to_date
+	FROM employees
+		JOIN dept_emp USING(emp_no)
+    WHERE hire_date =
+		(SELECT hire_date
+			FROM employees
+            WHERE emp_no = 101010)
+		AND to_date = '9999-01-01'
+	ORDER BY emp_no;
 
 -- 2. Find all the titles ever held by all current employees with the first name Aamod.
+SHOW TABLES;
+/*
+employees(emp_no, first_name, last_name)
+dept_emp(emp_no, to_date)
+titles(emp_no, title)
+*/
+DESCRIBE employees;
+DESCRIBE dept_emp;
+DESCRIBE titles;
+SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, titles.title AS title,
+	dept_emp.to_date AS to_date
+    FROM employees
+		JOIN dept_emp USING(emp_no)
+        JOIN titles USING (emp_no)
+	WHERE 
+		(SELECT CONCAT(employees.first_name, ' ', employees.last_name), title
+			FROM employees
+				JOIN titles USING(emp_no)
+			WHERE employees.first_name = 'Aamod')
+		AND dept_emp.to_date = '9999-01-01'
+    ORDER BY name
+    LIMIT 100;
 
 /* 3. How many people in the employees table are no longer working for the company? 
 Give the answer in a comment in your code.*/
@@ -32,4 +73,4 @@ BREAK LINE FROM EXERCISE TO BONUS EXERCISE
 -- 3. Find the department name that the employee with the highest salary works in.
 
 
--- BONUS EXERCISE END --
+-- BONUS EXERCISE END --SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, titles.title AS title,  dept_emp.to_date AS to_date     FROM employees   JOIN dept_emp USING(emp_no)         JOIN titles USING (emp_no)  WHERE    (SELECT CONCAT(employees.first_name, ' ', employees.last_name), title    FROM employees     JOIN titles USING(emp_no)    WHERE employees.first_name = 'Aamod')   AND dept_emp.to_date = '9999-01-01'     ORDER BY name     LIMIT 100
