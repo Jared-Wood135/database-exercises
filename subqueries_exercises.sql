@@ -166,4 +166,4 @@ BREAK LINE FROM EXERCISE TO BONUS EXERCISE
 -- 3. Find the department name that the employee with the highest salary works in.
 
 
--- BONUS EXERCISE END --SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, titles.title AS title,  dept_emp.to_date AS to_date     FROM employees   JOIN dept_emp USING(emp_no)         JOIN titles USING (emp_no)  WHERE    (SELECT CONCAT(employees.first_name, ' ', employees.last_name), title    FROM employees     JOIN titles USING(emp_no)    WHERE employees.first_name = 'Aamod')   AND dept_emp.to_date = '9999-01-01'     ORDER BY name     LIMIT 100
+-- BONUS EXERCISE END --
