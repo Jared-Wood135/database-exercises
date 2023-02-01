@@ -106,6 +106,48 @@ SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, salaries.
 
 /*6. How many current salaries are within 1 standard deviation of the current highest salary?
 What percentage of all salaries is this?*/
+-- GET STDDEV OF CURRENT SALARIES
+SELECT STDDEV(salary)
+FROM salaries
+WHERE to_date = '9999-01-01';
+-- GET HIGHEST SALARY
+SELECT MAX(salary)
+FROM salaries
+WHERE to_date = '9999-01-01';
+-- COUNT OF SALARIES WITHIN 1 STDDEV OF MAX SALARY
+SELECT COUNT(*)
+	FROM salaries
+	WHERE salary >=
+		(SELECT MAX(salary)
+			FROM salaries
+			WHERE to_date = '9999-01-01') -
+				(SELECT STDDEV(salary)
+					FROM salaries
+					WHERE to_date = '9999-01-01')
+/*		AND
+        (SELECT MAX(salary)
+			FROM salaries
+			WHERE to_date = '9999-01-01') +
+				(SELECT STDDEV(salary)
+					FROM salaries
+					WHERE to_date = '9999-01-01')*/
+	AND to_date = '9999-01-01';
+-- PERCENT OF ABOVE SALARIES COMPARED TO ALL SALARIES .03%
+SELECT
+	(SELECT COUNT(*)
+	FROM salaries
+	WHERE salary >=
+		(SELECT MAX(salary)
+			FROM salaries
+			WHERE to_date = '9999-01-01') -
+				(SELECT STDDEV(salary)
+					FROM salaries
+					WHERE to_date = '9999-01-01')
+		AND to_date = '9999-01-01')
+	/
+	(SELECT COUNT(*)
+		FROM salaries
+        WHERE to_date = '9999-01-01');
 
 -- EXERCISE END --
 
