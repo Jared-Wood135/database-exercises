@@ -31,19 +31,19 @@ titles(emp_no, title)
 DESCRIBE employees;
 DESCRIBE dept_emp;
 DESCRIBE titles;
-SELECT A.name, A.title, B.to_date
+SELECT A.name, B.title, A.to_date
     FROM 
-		(SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, titles.title AS title
-			FROM employees
-				JOIN titles USING(emp_no)
-			WHERE employees.first_name = 'Aamod') AS A
-	JOIN
 		(SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, dept_emp.to_date AS to_date
 			FROM employees
-				JOIN dept_emp USING(emp_no)
-			WHERE dept_emp.to_date = '9999-01-01') AS B
+				JOIN dept_emp.to_date USING(emp_no)
+			WHERE employees.first_name = 'Aamod'
+				AND dept_emp.to_date = '9999-01-01') AS A
+	JOIN
+		(SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, titles.title AS title
+			FROM employees
+				JOIN titles USING(emp_no)) AS B
 		USING(name)
-	LIMIT 100;
+	LIMIT 10;
 
 /* 3. How many people in the employees table are no longer working for the company? 
 Give the answer in a comment in your code.*/
