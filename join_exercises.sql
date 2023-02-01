@@ -188,6 +188,16 @@ GROUP BY
 ORDER BY
 	average_salary DESC;
 
+-- EXERCISE END --
+
+/*
+
+BREAK LINE FROM EXERCISE TO BONUS EXERCISE
+
+*/
+
+-- BONUS EXERCISE START --
+
 -- 11. Bonus Find the names of all current employees, their department name, and their current manager's name.
 SHOW TABLES;
 /*
@@ -196,4 +206,4 @@ employees
 
 -- 12. Bonus Who is the highest paid employee within each department.
 
--- Exercise End --
+-- BONUS EXERCISE END --
