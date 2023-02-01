@@ -31,19 +31,31 @@ titles(emp_no, title)
 DESCRIBE employees;
 DESCRIBE dept_emp;
 DESCRIBE titles;
-SELECT A.name, B.title, A.to_date
-    FROM 
-		(SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, dept_emp.to_date AS to_date
+-- CURRENT EMPLOYEES WITH FIRST NAME 'Aamod'
+SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, employees.emp_no
+	FROM employees
+		JOIN dept_emp USING(emp_no)
+	WHERE employees.first_name = 'Aamod'
+		AND dept_emp.to_date = '9999-01-01'
+    ORDER BY name;
+-- CURRENT EMPLOYEES WITH ALL TITLES WITH FIRST NAME 'Aamod'
+SELECT A.name AS name, titles.title AS title
+	FROM
+		(SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, employees.emp_no
 			FROM employees
-				JOIN dept_emp.to_date USING(emp_no)
+				JOIN dept_emp USING(emp_no)
 			WHERE employees.first_name = 'Aamod'
-				AND dept_emp.to_date = '9999-01-01') AS A
-	JOIN
-		(SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, titles.title AS title
-			FROM employees
-				JOIN titles USING(emp_no)) AS B
-		USING(name)
-	LIMIT 10;
+				AND dept_emp.to_date = '9999-01-01'
+			ORDER BY name) AS A
+	JOIN titles USING(emp_no)
+    ORDER BY name;
+-- CONFIRMATION QUERY
+SELECT CONCAT(employees.first_name, ' ', employees.last_name), titles.title AS title, titles.to_date AS title_date, dept_emp.to_date AS emp_date
+	FROM employees
+		JOIN titles USING(emp_no)
+        JOIN dept_emp USING(emp_no)
+	WHERE (employees.first_name = 'Aamod' AND employees.last_name = 'Albarhamtoshy')
+		OR (employees.first_name = 'Aamod' AND employees.last_name = 'Andreotta');
 
 /* 3. How many people in the employees table are no longer working for the company? 
 Give the answer in a comment in your code.*/
