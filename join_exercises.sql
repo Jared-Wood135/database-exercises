@@ -201,9 +201,84 @@ BREAK LINE FROM EXERCISE TO BONUS EXERCISE
 -- 11. Bonus Find the names of all current employees, their department name, and their current manager's name.
 SHOW TABLES;
 /*
-employees
+employees(emp_no, first_name, last_name)
+dept_emp(emp_no, dept_no, to_date)
+departments(dept_no, dept_name)
+dept_manager(dept_no, to_date)
 */
-
+DESCRIBE employees;
+DESCRIBE dept_emp;
+DESCRIBE departments;
+DESCRIBE dept_manager;
+-- NAME OF CURRENT MANAGER BY DEPARTMENT NAME QUERY
+SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, departments.dept_name AS dept_name
+	FROM employees
+		JOIN dept_manager USING(emp_no)
+        JOIN departments USING(dept_no)
+	WHERE dept_manager.to_date = '9999-01-01';
+-- NAME OF CURRENT EMPLOYEES BY DEPARTMENT NAME QUERY
+SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, departments.dept_name AS dept_name
+	FROM employees
+		JOIN dept_emp USING(emp_no)
+        JOIN departments USING(dept_no)
+	WHERE dept_emp.to_date = '9999-01-01';
+-- NAME OF CURRENT EMPLOYEES & MANAGERS BY DEPARTMENT NAME QUERY
+SELECT B.name AS current_employee_name, A.name AS current_manager_name, A.dept_name AS dept_name
+	FROM
+		(SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, departments.dept_name AS dept_name
+			FROM employees
+				JOIN dept_manager USING(emp_no)
+				JOIN departments USING(dept_no)
+			WHERE dept_manager.to_date = '9999-01-01') AS A
+	JOIN
+		(SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, departments.dept_name AS dept_name
+			FROM employees
+				JOIN dept_emp USING(emp_no)
+				JOIN departments USING(dept_no)
+			WHERE dept_emp.to_date = '9999-01-01') AS B
+		USING(dept_name)
+        LIMIT 100;
+        
 -- 12. Bonus Who is the highest paid employee within each department.
+SHOW TABLES;
+/*
+employees(emp_no, first_name, last_name)
+dept_emp(emp_no, dept_no, to_date)
+departments(dept_no, dept_name)
+salaries(emp_no, salary, to_date)
+*/
+DESCRIBE employees;
+DESCRIBE dept_emp;
+DESCRIBE departments;
+DESCRIBE salaries;
+-- NAME OF CURRENT EMPLOYEE BY DEPARTMENT NAME
+SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, departments.dept_name AS dept_name
+	FROM employees
+		JOIN dept_emp USING(emp_no)
+        JOIN departments USING(dept_no)
+	WHERE dept_emp.to_date = '9999-01-01';
+-- HIGHEST CURRENT SALARY BY DEPARTMENT NAME
+SELECT MAX(salaries.salary) AS salary, departments.dept_name AS dept_name
+	FROM salaries
+		JOIN dept_emp USING(emp_no)
+        JOIN departments USING(dept_no)
+	WHERE salaries.to_date = '9999-01-01'
+	GROUP BY departments.dept_name;
+-- CURRENT EMPLOYEE & HIGHEST CURRENT SALARY BY DEPARTMENT NAME
+SELECT A.name AS current_employee_name, B.salary AS current_salary, B.dept_name AS dept_name
+	FROM 
+		(SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, departments.dept_name AS dept_name
+			FROM employees
+				JOIN dept_emp USING(emp_no)
+				JOIN departments USING(dept_no)
+			WHERE dept_emp.to_date = '9999-01-01') AS A
+		JOIN
+			(SELECT MAX(salaries.salary) AS salary, departments.dept_name AS dept_name
+				FROM salaries
+					JOIN dept_emp USING(emp_no)
+					JOIN departments USING(dept_no)
+				WHERE salaries.to_date = '9999-01-01'
+				GROUP BY departments.dept_name) AS B
+		GROUP BY B.dept_name, B.salary;
 
 -- BONUS EXERCISE END --
