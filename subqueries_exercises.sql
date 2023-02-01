@@ -59,6 +59,17 @@ SELECT CONCAT(employees.first_name, ' ', employees.last_name), titles.title AS t
 
 /* 3. How many people in the employees table are no longer working for the company? 
 Give the answer in a comment in your code.*/
+-- 91479 employees no longer working at the company
+SHOW TABLES;
+SELECT COUNT(*)
+	FROM dept_emp; -- 331603 TOTAL
+SELECT COUNT(*)
+	FROM dept_emp
+	WHERE to_date = '9999-01-01'; -- 240124 CURRENT
+	
+SELECT COUNT(*) AS not_employed_total
+	FROM dept_emp
+    WHERE to_date != '9999-01-01'; -- 91479 LEFT
 
 -- 4. Find all the current department managers that are female. List their names in a comment in your code.
 
