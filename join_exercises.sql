@@ -279,6 +279,19 @@ SELECT A.name AS current_employee_name, B.salary AS current_salary, B.dept_name 
 					JOIN departments USING(dept_no)
 				WHERE salaries.to_date = '9999-01-01'
 				GROUP BY departments.dept_name) AS B
-		GROUP BY B.dept_name, B.salary;
+		WHERE B.salary IN
+			(SELECT MAX(salaries.salary) AS salary
+				FROM salaries
+					JOIN dept_emp USING(emp_no)
+                    JOIN departments USING(dept_no)
+				WHERE salaries.to_date = '9999-01-01'
+                GROUP BY departments.dept_name)
+			AND A.name IN
+				(SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name
+					FROM employees
+						JOIN dept_emp USING(emp_no)
+						JOIN departments USING(dept_no)
+					WHERE dept_emp.to_date = '9999-01-01')
+		LIMIT 100;
 
 -- BONUS EXERCISE END --
