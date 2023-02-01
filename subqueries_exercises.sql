@@ -72,9 +72,37 @@ SELECT COUNT(*) AS not_employed_total
     WHERE to_date != '9999-01-01'; -- 91479 LEFT
 
 -- 4. Find all the current department managers that are female. List their names in a comment in your code.
+-- Hilary Kambil, Isamu Legleitner, Karsten Sigstam, Leon DasSarma
+SHOW TABLES;
+DESCRIBE departments;
+DESCRIBE dept_manager;
+DESCRIBE employees;
+SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, departments.dept_name AS department, employees.gender AS gender
+	FROM employees
+		JOIN dept_manager USING(emp_no)
+        JOIN departments USING(dept_no)
+	WHERE dept_manager.to_date = '9999-01-01'
+		AND employees.gender = 'F'
+	ORDER BY name;
 
 /*5. Find all the employees who currently have a higher salary than the companies overall, 
 historical average salary.*/
+SHOW TABLES;
+/*
+employees(emp_no, first_name, last_name)
+salaries(emp_no, salary, to_date)
+*/
+SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, salaries.salary AS salary
+	FROM employees
+		JOIN salaries USING(emp_no)
+        JOIN dept_emp USING(emp_no)
+	WHERE salary > 
+		(SELECT AVG(salary)
+			FROM salaries
+            WHERE to_date != '9999-01-01')
+		AND salaries.to_date = '9999-01-01'
+		AND dept_emp.to_date = '9999-01-01'
+	ORDER BY salary;
 
 /*6. How many current salaries are within 1 standard deviation of the current highest salary?
 What percentage of all salaries is this?*/
