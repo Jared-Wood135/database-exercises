@@ -61,12 +61,19 @@ SELECT CONCAT(employees.first_name, ' ', employees.last_name), titles.title AS t
 Give the answer in a comment in your code.*/
 -- 91479 employees no longer working at the company
 SHOW TABLES;
-SELECT COUNT(*)
+SELECT A.total AS they_gone
+	FROM
+		(
+        SELECT COUNT(*) AS total
+			FROM dept_emp
+			WHERE to_date != '9999-01-01'
+		) AS A;
+            
+SELECT COUNT(*) AS total
 	FROM dept_emp; -- 331603 TOTAL
 SELECT COUNT(*)
 	FROM dept_emp
 	WHERE to_date = '9999-01-01'; -- 240124 CURRENT
-	
 SELECT COUNT(*) AS not_employed_total
 	FROM dept_emp
     WHERE to_date != '9999-01-01'; -- 91479 LEFT
@@ -83,6 +90,15 @@ SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, departmen
         JOIN departments USING(dept_no)
 	WHERE dept_manager.to_date = '9999-01-01'
 		AND employees.gender = 'F'
+	ORDER BY name;
+SELECT A.name, A.department, A.gender
+	FROM
+		(SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, departments.dept_name AS department, employees.gender AS gender
+			FROM employees
+				JOIN dept_manager USING(emp_no)
+				JOIN departments USING(dept_no)
+			WHERE dept_manager.to_date = '9999-01-01'
+				AND employees.gender = 'F') AS A
 	ORDER BY name;
 
 /*5. Find all the employees who currently have a higher salary than the companies overall, 
