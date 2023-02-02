@@ -150,11 +150,29 @@ customer.last_name = actor.last_name)
 Label customer first_name/last_name columns as customer_first_name/customer_last_name
 Label actor first_name/last_name columns in a similar fashion.
 returns correct number of records: 620*/
+SHOW DATABASES;
+USE sakila;
+SHOW TABLES;
+DESCRIBE customer;
+DESCRIBE actor;
+SELECT CONCAT(customer.first_name, ' ', customer.last_name) AS customer_first_name_customer_last_name,
+	CONCAT(actor.first_name, ' ', actor.last_name) AS actor_first_name_actor_last_name
+    FROM customer
+    JOIN actor
+    LIMIT 100;
 
 /* 9b. Select the customer first_name/last_name and actor first_name/last_name columns from performing 
 a /right join between the customer and actor column on the last_name column in each table. (i.e. 
 customer.last_name = actor.last_name)
 returns correct number of records: 200*/
+SHOW TABLES;
+DESCRIBE customer;
+DESCRIBE actor;
+SELECT CONCAT(customer.first_name, ' ', customer.last_name) AS customer_first_name_customer_last_name,
+	CONCAT(actor.first_name, ' ', actor.last_name) AS actor_first_name_actor_last_name
+    FROM customer
+    RIGHT JOIN actor USING(last_name);
+
 
 /* 9c. Select the customer first_name/last_name and actor first_name/last_name columns from performing 
 an inner join between the customer and actor column on the last_name column in each table. (i.e. 
