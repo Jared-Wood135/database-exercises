@@ -160,10 +160,53 @@ BREAK LINE FROM EXERCISE TO BONUS EXERCISE
 -- BONUS EXERCISE START --
 
 -- 1. Find all the department names that currently have female managers.
+/*
+departments(dept_no, dept_name)
+dept_manager(dept_no, emp_no, to_date)
+employees(emp_no, first_name, last_name, gender)
+*/
+DESCRIBE departments;
+DESCRIBE dept_manager;
+DESCRIBE employees;
+SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, departments.dept_name AS department, employees.gender AS gender
+	FROM departments
+		JOIN dept_manager USING(dept_no)
+        JOIN employees USING(emp_no)
+	WHERE dept_manager.to_date = '9999-01-01'
+		AND employees.gender = 'F'
+	ORDER BY name;
 
 -- 2. Find the first and last name of the employee with the highest salary.
+/*
+employees(emp_no, first_name, last_name)
+salaries(emp_no, salary, to_date)
+*/
+SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, salaries.salary AS salary
+	FROM employees
+		JOIN salaries USING(emp_no)
+	WHERE salaries.to_date = '9999-01-01'
+		AND salaries.salary =
+			(SELECT MAX(salary)
+				FROM salaries
+                WHERE to_date = '9999-01-01');
 
 -- 3. Find the department name that the employee with the highest salary works in.
-
+/*
+departments(dept_no, dept_name)
+dept_emp(emp_no, dept_no, to_date)
+employees(emp_no, first_name, last_name)
+salaries(emp_no, salary, to_date)
+*/
+SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, salaries.salary AS salary, departments.dept_name AS department
+	FROM departments
+		JOIN dept_emp USING(dept_no)
+        JOIN employees USING(emp_no)
+        JOIN salaries USING(emp_no)
+	WHERE salaries.to_date = '9999-01-01'
+		AND dept_emp.to_date = '9999-01-01'
+        AND salaries.salary =
+			(SELECT MAX(salary)
+				FROM salaries
+                WHERE to_date = '9999-01-01');
 
 -- BONUS EXERCISE END --
