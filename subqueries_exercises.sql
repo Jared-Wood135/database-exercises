@@ -224,5 +224,5 @@ SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, salaries.
 			(SELECT MAX(salary)
 				FROM salaries
                 WHERE to_date = '9999-01-01');
-
+SELECT * FROM salaries ORDER BY salary DESC LIMIT 100;
 -- BONUS EXERCISE END --
