@@ -148,9 +148,9 @@ SELECT COUNT(*)
 					FROM salaries
 					WHERE to_date = '9999-01-01')*/
 	AND to_date = '9999-01-01';
--- PERCENT OF ABOVE SALARIES COMPARED TO ALL SALARIES .03%
+-- PERCENT OF ABOVE SALARIES COMPARED TO ALL SALARIES .003%
 SELECT
-	(SELECT COUNT(*)
+	((SELECT COUNT(*)
 	FROM salaries
 	WHERE salary >=
 		(SELECT MAX(salary)
@@ -163,7 +163,7 @@ SELECT
 	/
 	(SELECT COUNT(*)
 		FROM salaries
-        WHERE to_date = '9999-01-01');
+)) * 10;
 
 -- EXERCISE END --
 
