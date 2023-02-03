@@ -347,14 +347,46 @@ SELECT customer_list.name AS name, customer.email AS email
 
 /* 16. Sales have been lagging among young families, and you wish to target all family movies for a 
 promotion. Identify all movies categorized as famiy films.*/
-
+USE sakila;
+SELECT * FROM film_category LIMIT 10;
+SELECT * FROM film LIMIT 10;
+SELECT * FROM film_list LIMIT 10;
+SELECT title, category
+	FROM film_list
+	WHERE category = 'Family';
 
 -- 17. Write a query to display how much business, in dollars, each store brought in.
+SELECT * FROM sales_by_store LIMIT 10;
+	SELECT store, total_sales AS revenue 
+		FROM sales_by_store;
 
 -- 18. Write a query to display for each store its store ID, city, and country.
+SELECT * FROM store LIMIT 10; -- store_id, address_id
+SELECT * FROM address LIMIT 10; -- address_id, city_id
+SELECT * FROM city LIMIT 10; -- city_id, city, country_id
+SELECT * FROM country LIMIT 10; -- country_id, country
+SELECT store.store_id AS store_id, city.city AS city, country.country AS country
+	FROM store
+		JOIN address USING(address_id)
+        JOIN city USING(city_id)
+        JOIN country USING(country_id);
 
 /* 19. List the top five genres in gross revenue in descending order. (Hint: you may need to use 
 the following tables: category, film_category, inventory, payment, and rental.)*/
+SELECT * FROM film_category LIMIT 10; -- film_id, category_id
+SELECT * FROM category LIMIT 10; -- category_id, name
+SELECT * FROM inventory LIMIT 10; -- inventory_id, film_id, store_id
+SELECT * FROM payment LIMIT 10; -- rental_id, amount, staff_id, customer_id, payment_id
+SELECT * FROM rental LIMIT 10; -- rental_id, 
+SELECT category.name AS genre, SUM(payment.amount) AS revenue
+	FROM category
+		JOIN film_category USING(category_id)
+        JOIN inventory USING(film_id)
+        JOIN rental USING(inventory_id)
+        JOIN payment USING(rental_id)
+	GROUP BY genre
+    ORDER BY revenue DESC
+    LIMIT 5;
 
 -- 2ND SET OF QUESTIONS (19) END --
 
