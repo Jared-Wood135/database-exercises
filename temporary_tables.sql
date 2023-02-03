@@ -1,17 +1,50 @@
 SHOW DATABASES;
+USE oneil_2098;
 CREATE TEMPORARY TABLE yeetus(
 	deleteus varchar(10));
+INSERT INTO yeetus(deleteus) VALUES ('ya'), ('yeet');
+SHOW TABLES;
 -- EXERCISE START --
 
 /* 1. Using the example from the lesson, create a temporary table called employees_with_departments
 that contains first_name, last_name, and dept_name for employees currently with that department. 
 Be absolutely sure to create this table on your own database. If you see "Access denied for user ...", 
 it means that the query was attempting to write a new table to a database that you can only read.*/
+DESCRIBE employees.departments;
+-- Creates a completely combined 3 tables
+CREATE TEMPORARY TABLE employees_with_departments AS
+	SELECT *
+		FROM employees.employees
+			JOIN employees.dept_emp USING(emp_no)
+            JOIN employees.departments USING(dept_no);
+-- Creates a table with specific columns (emp_w_dept)
+CREATE TEMPORARY TABLE emp_w_dept AS
+	SELECT employees.employees.first_name, employees.employees.last_name, employees.departments.dept_name
+		FROM employees.employees
+			JOIN employees.dept_emp USING(emp_no)
+            JOIN employees.departments USING(dept_no);
+SELECT * FROM emp_w_dept LIMIT 100;
+-- Drops unwanted columns
+DESCRIBE employees_with_departments;
+ALTER TABLE employees_with_departments
+	DROP dept_no,
+	DROP emp_no,
+	DROP birth_date,
+	DROP gender,
+	DROP hire_date,
+	DROP from_date,
+	DROP to_date;
+DESCRIBE employees_with_departments;
 
 /* 1a. Add a column named full_name to this table. It should be a VARCHAR whose length is the sum 
 of the lengths of the first name and last name columns.*/
+ALTER TABLE employees_with_departments
+	ADD full_name VARCHAR(100);
 
 -- 1b. Update the table so that full name column contains the correct data
+UPDATE employees_with_departments
+	SET full_name = CONCAT(first_name, ' ', last_name)
+    WHERE 
 
 -- 1c. Remove the first_name and last_name columns from the table.
 
