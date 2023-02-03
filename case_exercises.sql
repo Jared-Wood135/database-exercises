@@ -24,25 +24,46 @@ SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, dept_emp.
 /* 2. Write a query that returns all employee names (previous and current), and a new column 
 'alpha_group' that returns 'A-H', 'I-Q', or 'R-Z' depending on the first letter of their last name.*/
 SELECT last_name,
-	CASE last_name
-		WHEN SUBSTR(last_name, 1, 1) NOT BETWEEN 'A' AND 'H' THEN 'A-H'
-        WHEN SUBSTR(last_name, 1, 1) NOT BETWEEN 'I' AND 'Q' THEN 'I-Q'
-        WHEN SUBSTR(last_name, 1, 1) NOT BETWEEN 'R' AND 'Z' THEN 'R-Z'
+	CASE
+		WHEN SUBSTR(last_name, 1, 1) BETWEEN 'A' AND 'H' THEN 'A-H'
+        WHEN SUBSTR(last_name, 1, 1) BETWEEN 'I' AND 'Q' THEN 'I-Q'
+        WHEN SUBSTR(last_name, 1, 1) BETWEEN 'R' AND 'Z' THEN 'R-Z'
 		ELSE 'Not a name'
 	END AS alpha_group
     FROM employees;
 
 -- 3. How many employees (current or previous) were born in each decade?
-SELECT * FROM employees ORDER BY birth_date DESC LIMIT 10;
-SELECT birth_date,
-	COUNT(CASE WHEN birth_date NOT BETWEEN '1950%' AND '1959%' THEN birth_date ELSE NULL END) AS 'employees_from_1950s',
-    COUNT(CASE WHEN birth_date NOT BETWEEN '1960%' AND '1969%' THEN birth_date ELSE NULL END) AS 'employees_from_1960s'
-		FROM employees
-        GROUP BY employees_from_1950s, employees_from_1960s;
-
-    
+SELECT * FROM employees ORDER BY birth_date LIMIT 10;
+DESCRIBE employees;
+SELECT
+	COUNT(CASE WHEN birth_date BETWEEN '1950-01-01' AND '1959-12-31' THEN birth_date ELSE NULL END) AS 'employees_from_1950',
+    COUNT(CASE WHEN birth_date BETWEEN '1960-01-01' AND '1969-12-31' THEN birth_date ELSE NULL END) AS 'employees_from_1960s'
+		FROM employees;    
 
 /* 4. What is the current average salary for each of the following department groups: R&D, 
 Sales & Marketing, Prod & QM, Finance & HR, Customer Service?*/
+SELECT * FROM salaries LIMIT 10; -- (emp_no, salary, to_date)
+SELECT * FROM dept_emp LIMIT 10; -- (emp_no, dept_no)
+SELECT * FROM departments; -- (dept_no, dept_name)
+SELECT
+	AVG(CASE WHEN departments.dept_name = 'Research' OR departments.dept_name = 'Development' 
+		THEN salaries.salary ELSE NULL END) 
+        AS 'R & D avg_salary',
+    AVG(CASE WHEN departments.dept_name = 'Sales' OR departments.dept_name = 'Marketing'
+		THEN salaries.salary ELSE NULL END)
+		AS 'Sales & Marketing avg_salary',
+	AVG(CASE WHEN departments.dept_name = 'Production' OR departments.dept_name = 'Quality Management'
+		THEN salaries.salary ELSE NULL END)
+        AS 'Prod & QM avg_salary',
+	AVG(CASE WHEN departments.dept_name = 'Finance' OR departments.dept_name = 'Human Resources'
+		THEN salaries.salary ELSE NULL END)
+		AS 'Finanace & HR avg_salary',
+	AVG(CASE WHEN departments.dept_name = 'Customer Service'
+		THEN salaries.salary ELSE NULL END)
+        AS 'Customer Service avg_salary'
+	FROM departments
+		JOIN dept_emp USING(dept_no)
+        JOIN salaries USING(emp_no)
+	WHERE salaries.to_date >= NOW();
 
 -- EXERCISE END --
