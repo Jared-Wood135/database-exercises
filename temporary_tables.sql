@@ -1,5 +1,6 @@
 SHOW DATABASES;
-
+CREATE TEMPORARY TABLE yeetus(
+	deleteus varchar(10));
 -- EXERCISE START --
 
 /* 1. Using the example from the lesson, create a temporary table called employees_with_departments
@@ -36,9 +37,9 @@ FROM salaries;*/
 -- END EXERCISE --
 
 /*
-
+======================================================================================================================
 BREAK LINE FROM EXERCISE TO BONUS EXERCISE
-
+======================================================================================================================
 */
 
 -- BONUS EXERCISE START --
