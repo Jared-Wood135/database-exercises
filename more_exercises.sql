@@ -317,14 +317,37 @@ SELECT film.title, COUNT(*) AS total_copies
 /* 13. The music of Queen and Kris Kristofferson have seen an unlikely resurgence. As an unintended 
 consequence, films starting with the letters K and Q have also soared in popularity. Use subqueries 
 to display the titles of movies starting with the letters K and Q whose language is English.*/
+SELECT * FROM film LIMIT 10;
+SELECT * FROM language LIMIT 10;
+SELECT film.title, language.name
+	FROM film
+		JOIN language USING(language_id)
+	WHERE film.title LIKE 'K%' OR 'Q%'
+		AND language.name = 'English';
 
 -- 14. Use subqueries to display all actors who appear in the film Alone Trip.
+SELECT * FROM actor LIMIT 10;
+SELECT * FROM film_actor LIMIT 10;
+SELECT CONCAT(actor.first_name, ' ', actor.last_name) AS actor, film.title AS film
+	FROM actor
+		JOIN film_actor USING(actor_id)
+        JOIN film USING(film_id)
+	WHERE film.title =
+		(SELECT title
+			FROM film
+            WHERE title = 'Alone Trip');
 
 /* 15. You want to run an email marketing campaign in Canada, for which you will need the names and 
 email addresses of all Canadian customers.*/
+SELECT * FROM customer LIMIT 10;
+SELECT * FROM customer_list LIMIT 10;
+SELECT customer_list.name AS name, customer.email AS email
+	FROM customer_list
+		JOIN customer ON customer.customer_id = customer_list.ID;
 
 /* 16. Sales have been lagging among young families, and you wish to target all family movies for a 
 promotion. Identify all movies categorized as famiy films.*/
+
 
 -- 17. Write a query to display how much business, in dollars, each store brought in.
 
