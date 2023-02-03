@@ -69,6 +69,9 @@ USE oneil_2098;
 CREATE TEMPORARY TABLE payment_temp AS
 	SELECT ROUND(sakila.payment.amount * 100) AS cost_in_cents
 		FROM sakila.payment;
+ALTER TABLE payment_temp
+	MODIFY cost_in_cents int;
+DESCRIBE payment_temp;
 SELECT * FROM payment_temp;
 
 /* 3. Find out how the current average pay in each department compares to the overall current pay 
