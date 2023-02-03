@@ -399,10 +399,21 @@ BREAK LINE FROM 2ND SET OF QUESTIONS (19) TO 3RD SET OF QUESTIONS (7)
 -- 3RD SET OF QUESTIONS (7) START --
 
 -- 1. What is the average replacement cost of a film? Does this change depending on the rating of the film?
+USE sakila;
+SHOW TABLES;
+SELECT * FROM film LIMIT 10;
+SELECT rating, ROUND(AVG(replacement_cost), 2)
+	FROM film
+    GROUP BY rating;
 
 -- 2. How many different films of each genre are in the database?
+SELECT * FROM film_list LIMIT 10;
+SELECT DISTINCT category, COUNT(*)
+	FROM film_list
+    GROUP BY category;
 
 -- 3. What are the 5 frequently rented films?
+
 
 -- 4. What are the most most profitable films (in terms of gross revenue)?
 
