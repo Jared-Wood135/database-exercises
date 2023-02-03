@@ -218,9 +218,9 @@ SELECT staff.first_name, staff.last_name, address.address, address.address2, cit
 -- 1ST SET OF QUESTIONS (9) END --
 
 /*
-
+======================================================================================================================
 BREAK LINE FROM 1ST SET OF QUESTIONS (9) TO 2ND SET OF QUESTIONS (19)
-
+======================================================================================================================
 */
 
 -- 2ND SET OF QUESTIONS (19) START --
@@ -391,7 +391,197 @@ SELECT category.name AS genre, SUM(payment.amount) AS revenue
 -- 2ND SET OF QUESTIONS (19) END --
 
 /*
-
+======================================================================================================================
 BREAK LINE FROM 2ND SET OF QUESTIONS (19) TO 3RD SET OF QUESTIONS (7)
-
+======================================================================================================================
 */
+
+-- 3RD SET OF QUESTIONS (7) START --
+
+-- 1. What is the average replacement cost of a film? Does this change depending on the rating of the film?
+
+-- 2. How many different films of each genre are in the database?
+
+-- 3. What are the 5 frequently rented films?
+
+-- 4. What are the most most profitable films (in terms of gross revenue)?
+
+-- 5. Who is the best customer?
+
+-- 6. Who are the most popular actors (that have appeared in the most films)?
+
+-- 7. What are the sales for each store for each month in 2005?
+
+-- 3RD SET OF QUESTIONS (7) END --
+
+/*
+======================================================================================================================
+BREAK LINE FROM 3RD SET OF QUESTIONS (7) TO 3RD SET OF QUESTIONS (BONUS - 1)
+======================================================================================================================
+*/
+
+-- 3RD SET OF QUESTIONS (BONUS - 1) START --
+
+-- 1. Find the film title, customer name, customer phone number, and customer address for all the outstanding DVDs.
+
+-- 3RD SET OF QUESTIONS (BONUS - 1) END --
+
+/*
+======================================================================================================================
+BREAK LINE FROM 3RD SET OF QUESTIONS (BONUS - 1) TO EMPLOYEES DATABASE QUESTION (1)
+======================================================================================================================
+*/
+
+-- EMPLOYEES DATABASE QUESTIONS (1) START --
+
+/* 1. How much do the current managers of each department get paid, relative to the average salary 
+for the department? Is there any department where the department manager gets paid less than the average salary?*/
+
+-- EMPLOYEES DATABASE QUESTIONS (1) END --
+
+/*
+======================================================================================================================
+BREAK LINE FROM EMPLOYEES DATABASE QUESTIONS (1) TO WORLD DATABASE QUESTIONS (6)
+======================================================================================================================
+*/
+
+-- WORLD DATABASE QUESTIONS (6) START --
+
+-- 1. What languages are spoken in Santa Monica?
+
+-- 2. How many different countries are in each region?
+
+-- 3. What is the population for each region?
+
+-- 4. What is the population for each continent?
+
+-- 5. What is the average life expectancy globally?
+
+-- 6. What is the average life expectancy for each region, each continent? Sort the results from shortest to longest
+
+-- WORLD DATABASE QUESTIONS (6) END --
+
+/*
+======================================================================================================================
+BREAK LINE FROM WORLD DATABASE QUESTIONS (6) TO WORLD DATABASE QUESTIONS (BONUS - 6)
+======================================================================================================================
+*/
+
+-- WORLD DATABASE QUESTIONS (BONUS - 6) START --
+
+-- 1. Find all the countries whose local name is different from the official name
+
+-- 2. How many countries have a life expectancy less than x?
+
+-- 3. What state is city x located in?
+
+-- 4. What region of the world is city x located in?
+
+-- 5. What country (use the human readable name) city x located in?
+
+-- 6. What is the life expectancy in city x?
+
+-- WORLD DATABASE QUESTIONS (BONUS - 6) END --
+
+/*
+======================================================================================================================
+BREAK LINE FROM WORLD DATABASE QUESTIONS (BONUS - 6) TO ADVANCED: PIZZA DATABASE 1ST SET OF QUESTIONS (10)
+======================================================================================================================
+*/
+
+-- ADVANCED: PIZZA DATABASE 1ST SET OF QUESTIONS (10) START --
+
+-- 1. What information is stored in the toppings table? How does this table relate to the pizzas table?
+
+-- 2. What information is stored in the modifiers table? How does this table relate to the pizzas table?
+
+-- 3. How are the pizzas and sizes tables related?
+
+-- 4. What other tables are in the database?
+
+-- 5. How many unique toppings are there?
+
+-- 6. How many unique orders are in this dataset?
+
+-- 7. Which size of pizza is sold the most?
+
+-- 8. How many pizzas have been sold in total?
+
+-- 9. What is the most common size of pizza ordered?
+
+-- 10. What is the average number of pizzas per order?
+
+-- ADVANCED: PIZZA DATABASE 1ST SET OF QUESTIONS (10) END --
+
+/*
+======================================================================================================================
+BREAK LINE FROM ADVANCED: PIZZA DATABASE 1ST SET OF QUESTIONS (10)
+TO ADVANCED: PIZZA DATABASE 2ND SET OF QUESTIONS (3)
+======================================================================================================================
+*/
+
+-- ADVANCED: PIZZA DATABASE 2ND SET OF QUESTIONS (3) START --
+/* CONDITIONAL FOR FOLLOWING QUESTIONS:
+Find the total price for each order. The total price is the sum of: 1, 2, 3...
+Topping price is affected by the amount of the topping specified. A light amount 
+is half of the regular price. An extra amount is 1.5 times the regular price, and 
+double of the topping is double the price.*/
+
+-- 1. The price based on pizza size
+
+-- 2. Any modifiers that need to be charged for
+
+-- 3. The sum of the topping prices
+
+-- ADVANCED: PIZZA DATABASE 2ND SET OF QUESTIONS (3) END --
+
+/*
+======================================================================================================================
+BREAK LINE FROM ADVANCED: PIZZA DATABASE 2ND SET OF QUESTIONS (3) TO ADDITIONAL QUESTIONS (20)
+======================================================================================================================
+*/
+
+-- ADDITIONAL QUESTIONS (20) START --
+
+-- 1. What is the average price of pizzas that have no cheese?
+
+-- 2. What is the most common size for pizzas that have extra cheese?
+
+-- 3. What is the most common topping for pizzas that are well done?
+
+-- 4. How many pizzas are only cheese (i.e. have no toppings)?
+
+/* 5. How many orders consist of pizza(s) that are only cheese? What is the average price 
+of these orders? The most common pizza size?*/
+
+-- 6. How may large pizzas have olives on them?
+
+-- 7. What is the average number of toppings per pizza?
+
+-- 8. What is the average number of pizzas per order?
+
+-- 9. What is the average pizza price?
+
+-- 10. What is the average order total?
+
+-- 11. What is the average number of items per order?
+
+-- 12. What is the average number of toppings per pizza for each size of pizza?
+
+-- 13. What is the average order total for orders that contain more than 1 pizza?
+
+-- 14. What is the most common pizza size for orders that contain only a single pizza?
+
+-- 15. How many orders consist of 3+ pizzas? What is the average number of toppings for these orders?
+
+-- 16. What is the most common topping on large and extra large pizzas?
+
+-- 17. What is the most common topping for orders that consist of 2 pizzas?
+
+-- 18. Which size of pizza most frequently has modifiers?
+
+-- 19. What percentage of pizzas with hot sauce have extra cheese?
+
+-- 20. What is the average order price for orders that have at least 1 pizza with pineapple?
+
+-- ADDITIONAL QUESTIONS (20) END --
