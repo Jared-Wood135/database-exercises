@@ -57,6 +57,7 @@ CREATE TEMPORARY TABLE alternate AS
 		FROM employees.employees
 			JOIN employees.dept_emp USING(emp_no)
             JOIN employees.departments USING(dept_no);
+DESCRIBE alternate;
 SELECT * FROM alternate ORDER BY full_name LIMIT 100;
 
 /* 2. Create a temporary table based on the payment table from the sakila database.  
