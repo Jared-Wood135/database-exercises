@@ -413,15 +413,67 @@ SELECT DISTINCT category, COUNT(*)
     GROUP BY category;
 
 -- 3. What are the 5 frequently rented films?
-
+-- Bucket Brotherhood, Rocketeer Mother, Forward Temple, Grit Clockwork, Juggler Hardly
+USE sakila;
+SELECT * FROM rental LIMIT 10; -- rental_id, inventory_id, customer_id
+SELECT * FROM payment LIMIT 10; -- customer_id, rental_id, amount
+SELECT * FROM film LIMIT 10; -- film_id, title
+SELECT * FROM inventory LIMIT 10;-- film_id, inventory_id, store_id
+SELECT film.title AS title, COUNT(payment.rental_id) AS total_rents
+	FROM film
+		JOIN inventory USING(film_id)
+        JOIN rental USING(inventory_id)
+        JOIN payment USING(rental_id)
+	GROUP BY title
+    ORDER BY total_rents DESC;
 
 -- 4. What are the most most profitable films (in terms of gross revenue)?
+-- TOP 3: Telegraph Voyage($231.73), Wife Turn($223.69), Zorro Ark($214.69)
+SELECT * FROM rental LIMIT 10; -- rental_id, inventory_id, customer_id
+SELECT * FROM payment LIMIT 10; -- customer_id, rental_id, amount
+SELECT * FROM film LIMIT 10; -- film_id, title
+SELECT * FROM inventory LIMIT 10;-- film_id, inventory_id, store_id
+SELECT film.title AS title, SUM(payment.amount) AS gross_revenue
+	FROM film
+		JOIN inventory USING(film_id)
+        JOIN rental USING(inventory_id)
+        JOIN payment USING(rental_id)
+	GROUP BY title
+    ORDER BY gross_revenue DESC;
 
 -- 5. Who is the best customer?
+-- Karl Seal ($221.55)
+SELECT * FROM customer_list LIMIT 10; -- ID, name
+SELECT * FROM payment LIMIT 10; -- customer_id, amount
+SELECT customer_list.name AS name, SUM(payment.amount) as total_spent
+	FROM customer_list
+		JOIN payment ON payment.customer_id = customer_list.ID
+	GROUP BY name
+    ORDER BY total_spent DESC;
 
 -- 6. Who are the most popular actors (that have appeared in the most films)?
+-- TOP 3: Susan Davis(54), Gina Degeneres(42), Walter Torn(41)
+SELECT * FROM actor LIMIT 10; -- actor_id, first_name, last_name
+SELECT * FROM film_actor LIMIT 10; -- actor_id, film_id
+SELECT * FROM film LIMIT 10; -- film_id, title
+SELECT CONCAT(actor.first_name, ' ', actor.last_name) AS name, COUNT(film.title) AS total_movies
+	FROM actor
+		JOIN film_actor USING(actor_id)
+        JOIN film USING(film_id)
+	GROUP BY name
+    ORDER BY total_movies DESC;
 
 -- 7. What are the sales for each store for each month in 2005?
+SELECT * FROM payment; -- staff_id, rental_id, amount, payment_date
+SELECT * FROM staff LIMIT 10; -- staff_id, store_id
+SELECT staff.store_id AS store_id,
+	SUM(CASE WHEN payment.payment_date LIKE '2005-05%' THEN payment.amount ELSE NULL END) AS may_total,
+    SUM(CASE WHEN payment.payment_date LIKE '2005-06%' THEN payment.amount ELSE NULL END) AS jun_total,
+    SUM(CASE WHEN payment.payment_date LIKE '2005-07%' THEN payment.amount ELSE NULL END) AS jul_total,
+    SUM(CASE WHEN payment.payment_date LIKE '2005-08%' THEN payment.amount ELSE NULL END) AS aug_total
+FROM payment
+	JOIN staff USING(staff_id)
+GROUP BY store_id;
 
 -- 3RD SET OF QUESTIONS (7) END --
 
