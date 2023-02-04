@@ -542,7 +542,7 @@ SELECT departments.dept_name AS department, CONCAT(employees.first_name, ' ', em
 	WHERE dept_manager.to_date >= NOW()
 		AND salaries.to_date >= NOW();
 -- AVG salary by department
-SELECT departments.dept_name AS department, AVG(salaries.salary) AS avg_salary
+SELECT departments.dept_name AS department, ROUND(AVG(salaries.salary), 2) AS avg_salary
 	FROM departments
 		JOIN dept_emp USING(dept_no)
         JOIN salaries USING(emp_no)
@@ -552,7 +552,7 @@ SELECT departments.dept_name AS department, AVG(salaries.salary) AS avg_salary
 SELECT 
 	A.department AS department, 
     A.manager AS manager, 
-    A.salary AS salary, 
+	A.salary AS salary, 
     B.avg_salary AS avg_salary,
 	IF(salary < avg_salary, 'True', 'False') AS 'salary_lower_than_avg'
 FROM
@@ -564,7 +564,7 @@ FROM
 	WHERE dept_manager.to_date >= NOW()
 		AND salaries.to_date >= NOW()) AS A
 JOIN
-	(SELECT departments.dept_name AS department, AVG(salaries.salary) AS avg_salary
+	(SELECT departments.dept_name AS department, ROUND(AVG(salaries.salary), 2) AS avg_salary
 	FROM departments
 		JOIN dept_emp USING(dept_no)
         JOIN salaries USING(emp_no)
@@ -584,16 +584,51 @@ BREAK LINE FROM EMPLOYEES DATABASE QUESTIONS (1) TO WORLD DATABASE QUESTIONS (6)
 -- WORLD DATABASE QUESTIONS (6) START --
 
 -- 1. What languages are spoken in Santa Monica?
+SHOW DATABASES;
+USE world;
+SHOW TABLES;
+SELECT * FROM city LIMIT 10;
+SELECT * FROM country LIMIT 10;
+SELECT * FROM countrylanguage LIMIT 10;
+SELECT countrylanguage.Language AS language
+	FROM countrylanguage
+		JOIN country ON country.code = countrylanguage.CountryCode
+        JOIN city ON city.CountryCode = country.code
+	WHERE city.Name = 'Santa Monica';
 
 -- 2. How many different countries are in each region?
+SELECT DISTINCT Region, COUNT(Name) AS total_countries
+	FROM country
+    GROUP BY Region
+    ORDER BY Region;
 
 -- 3. What is the population for each region?
+SELECT Region, SUM(Population) AS total_population
+	FROM country
+    GROUP BY Region
+    ORDER BY Region;
 
 -- 4. What is the population for each continent?
+SELECT Continent, SUM(Population) AS total_population
+	FROM country
+    GROUP BY Continent
+    ORDER BY Continent;
 
 -- 5. What is the average life expectancy globally?
+SELECT ROUND(AVG(LifeExpectancy), 2) AS global_life_expectancy
+	FROM country;
 
 -- 6. What is the average life expectancy for each region, each continent? Sort the results from shortest to longest
+-- AVG region life expectancy
+SELECT Region, ROUND(AVG(LifeExpectancy), 2) AS region_life_expectancy
+	FROM country
+    GROUP BY Region
+    ORDER BY region_life_expectancy;
+-- AVG continent life expectancy
+SELECT Continent, ROUND(AVG(LifeExpectancy), 2) AS continent_life_expectancy
+	FROM country
+    GROUP BY Continent
+    ORDER BY continent_life_expectancy;
 
 -- WORLD DATABASE QUESTIONS (6) END --
 
