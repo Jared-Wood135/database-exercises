@@ -486,6 +486,33 @@ BREAK LINE FROM 3RD SET OF QUESTIONS (7) TO 3RD SET OF QUESTIONS (BONUS - 1)
 -- 3RD SET OF QUESTIONS (BONUS - 1) START --
 
 -- 1. Find the film title, customer name, customer phone number, and customer address for all the outstanding DVDs.
+-- Not sure what outstanding classifies as, but I'll define it as the top 5 in rental count
+SELECT * FROM film LIMIT 10; -- title, film_id
+SELECT * FROM rental LIMIT 10; -- rental_id, inventory_id, customer_id
+SELECT * FROM inventory LIMIT 10; -- inventory_id, film_id
+SELECT * FROM customer_list LIMIT 10; -- ID, name, phone, address
+-- Group top 5 films by rental count (outstanding films)
+SELECT film.title AS title, COUNT(rental.rental_id) AS total_rentals
+	FROM film
+		JOIN inventory USING(film_id)
+        JOIN rental USING(inventory_id)
+	GROUP BY title
+    ORDER BY total_rentals DESC
+    LIMIT 5;
+-- Find customer info by "outstanding films"
+SELECT DISTINCT A.title AS title, customer_list.name AS name, customer_list.phone AS phone, customer_list.address AS address
+	FROM film
+		JOIN 
+			(SELECT film.title AS title, COUNT(rental.rental_id) AS total_rentals
+				FROM film
+					JOIN inventory USING(film_id)
+					JOIN rental USING(inventory_id)
+				GROUP BY title
+				ORDER BY total_rentals DESC
+				LIMIT 5) AS A
+		JOIN inventory USING(film_id)
+        JOIN rental USING(inventory_id)
+        JOIN customer_list ON customer_list.ID = rental.customer_id;
 
 -- 3RD SET OF QUESTIONS (BONUS - 1) END --
 
