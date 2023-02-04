@@ -526,6 +526,52 @@ BREAK LINE FROM 3RD SET OF QUESTIONS (BONUS - 1) TO EMPLOYEES DATABASE QUESTION 
 
 /* 1. How much do the current managers of each department get paid, relative to the average salary 
 for the department? Is there any department where the department manager gets paid less than the average salary?*/
+-- Oscar Ghazalie(Production) and Yuchang Weedman(Customer Service)
+USE employees;
+SHOW TABLES;
+SELECT * FROM departments; -- dept_no, dept_name
+SELECT * FROM dept_manager LIMIT 10; -- emp_no, dept_no, to_date
+SELECT * FROM salaries LIMIT 10; -- emp_no, salary, to_date
+SELECT * FROM employees LIMIT 10; -- emp_no, first_name, last_name
+-- Salary of each department manager
+SELECT departments.dept_name AS department, CONCAT(employees.first_name, ' ', employees.last_name) AS manager, salaries.salary AS salary
+	FROM employees
+		JOIN salaries USING(emp_no)
+        JOIN dept_manager USING(emp_no)
+        JOIN departments USING(dept_no)
+	WHERE dept_manager.to_date >= NOW()
+		AND salaries.to_date >= NOW();
+-- AVG salary by department
+SELECT departments.dept_name AS department, AVG(salaries.salary) AS avg_salary
+	FROM departments
+		JOIN dept_emp USING(dept_no)
+        JOIN salaries USING(emp_no)
+	WHERE salaries.to_date >= NOW()
+    GROUP BY department;
+-- dept, name, salary, avg, T/F if less than avg
+SELECT 
+	A.department AS department, 
+    A.manager AS manager, 
+    A.salary AS salary, 
+    B.avg_salary AS avg_salary,
+	IF(salary < avg_salary, 'True', 'False') AS 'salary_lower_than_avg'
+FROM
+	(SELECT departments.dept_name AS department, CONCAT(employees.first_name, ' ', employees.last_name) AS manager, salaries.salary AS salary
+	FROM employees
+		JOIN salaries USING(emp_no)
+        JOIN dept_manager USING(emp_no)
+        JOIN departments USING(dept_no)
+	WHERE dept_manager.to_date >= NOW()
+		AND salaries.to_date >= NOW()) AS A
+JOIN
+	(SELECT departments.dept_name AS department, AVG(salaries.salary) AS avg_salary
+	FROM departments
+		JOIN dept_emp USING(dept_no)
+        JOIN salaries USING(emp_no)
+	WHERE salaries.to_date >= NOW()
+    GROUP BY department) AS B
+    USING(department)
+ORDER BY salary;
 
 -- EMPLOYEES DATABASE QUESTIONS (1) END --
 
