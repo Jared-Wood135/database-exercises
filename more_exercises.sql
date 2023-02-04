@@ -685,24 +685,74 @@ BREAK LINE FROM WORLD DATABASE QUESTIONS (BONUS - 6) TO ADVANCED: PIZZA DATABASE
 -- ADVANCED: PIZZA DATABASE 1ST SET OF QUESTIONS (10) START --
 
 -- 1. What information is stored in the toppings table? How does this table relate to the pizzas table?
+-- topping_id, topping_name, topping_price...  It gives pertinent topping data in relation to the pizza database
+SHOW DATABASES;
+USE pizza;
+SHOW TABLES;
+DESCRIBE toppings;
+SELECT * FROM toppings;
 
 -- 2. What information is stored in the modifiers table? How does this table relate to the pizzas table?
+-- modifier_id, modifier_name, modifier_price... It gives pertinent data in terms of cheese amount to the pizza database
+DESCRIBE modifiers;
+SELECT * FROM modifiers;
 
 -- 3. How are the pizzas and sizes tables related?
+-- Both tables contain the "size_id" column
+DESCRIBE pizzas;
+DESCRIBE sizes;
 
 -- 4. What other tables are in the database?
+/* Besides the "toppings", "modifiers", "pizzas", and "sizes" tables used in questions 1-3, there are tables
+"crust_types", "pizza_modifiers", and "pizza_toppings"*/
+SHOW TABLES;
 
 -- 5. How many unique toppings are there?
+-- 9 unique toppings
+SELECT * FROM toppings;
+SELECT DISTINCT COUNT(topping_name) AS unique_toppings
+	FROM toppings;
 
 -- 6. How many unique orders are in this dataset?
+-- 26334 Unique orders
+SELECT * FROM crust_types; -- 2 unique
+SELECT * FROM modifiers; -- 3 unique
+SELECT * FROM pizza_modifiers; -- NULL
+SELECT * FROM pizza_toppings; -- NULL//4 unique topping amounts
+SELECT * FROM pizzas; -- NULL
+SELECT * FROM sizes; -- 4 unique
+SELECT * FROM toppings; -- 9 unique
 
 -- 7. Which size of pizza is sold the most?
+-- "large" at 5061 orders
+SELECT * FROM pizzas;
+SELECT sizes.size_name AS sizes, COUNT(pizzas.size_id) total
+	FROM sizes
+		JOIN pizzas USING(size_id)
+	GROUP BY sizes
+    ORDER BY total DESC;
 
 -- 8. How many pizzas have been sold in total?
+-- 20001 total sold
+SELECT COUNT(*) AS total
+	FROM pizzas;
 
 -- 9. What is the most common size of pizza ordered?
+-- "large"
+SELECT sizes.size_name AS size, COUNT(pizzas.size_id) AS total
+	FROM sizes
+		JOIN pizzas USING(size_id)
+	GROUP BY size
+    ORDER BY total DESC;
 
 -- 10. What is the average number of pizzas per order?
+-- 2.0001 pizzas per order on average
+SELECT AVG(A.total)
+	FROM
+		(SELECT order_id, COUNT(*) AS total
+		FROM pizzas
+		GROUP BY order_id
+		ORDER BY order_id) AS A;
 
 -- ADVANCED: PIZZA DATABASE 1ST SET OF QUESTIONS (10) END --
 
