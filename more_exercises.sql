@@ -769,12 +769,66 @@ Find the total price for each order. The total price is the sum of: 1, 2, 3...
 Topping price is affected by the amount of the topping specified. A light amount 
 is half of the regular price. An extra amount is 1.5 times the regular price, and 
 double of the topping is double the price.*/
+SELECT * FROM crust_types LIMIT 10; -- crust_type_id, crust_type_name
+SELECT * FROM modifiers LIMIT 10; -- modifier_id, modifier_name, modifier_price
+SELECT * FROM pizza_modifiers LIMIT 10; -- pizza_id, modifier_id
+SELECT * FROM pizza_toppings LIMIT 10; -- pizza_id, topping_id, topping_amount
+SELECT * FROM pizzas LIMIT 10; -- pizza_id, order_id, crust_type_id, size_id
+SELECT * FROM sizes LIMIT 10; -- size_id, size_name, size_price
+SELECT * FROM toppings LIMIT 10; -- topping_id, topping_name, topping_price
 
 -- 1. The price based on pizza size
+SELECT pizzas.order_id AS order_id, SUM(size_price) AS total
+	FROM pizzas
+		JOIN sizes USING(size_id)
+	GROUP BY order_id
+    ORDER BY order_id;
 
 -- 2. Any modifiers that need to be charged for
+SELECT pizzas.order_id AS order_id, SUM(modifiers.modifier_price) AS total
+	FROM pizzas
+		JOIN pizza_modifiers USING(pizza_id)
+        JOIN modifiers USING(modifier_id)
+	GROUP BY order_id
+    ORDER BY order_id;
 
 -- 3. The sum of the topping prices
+SELECT pizzas.order_id AS order_id, ROUND(SUM(A.topping_total), 2) AS total
+	FROM 
+		pizzas
+			JOIN
+				(SELECT
+					pizza_toppings.pizza_id AS pizza_id,
+					pizza_toppings.topping_id AS topping_id,
+					pizza_toppings.topping_amount AS topping_amount,
+						CASE
+							WHEN topping_amount = 'light' THEN (toppings.topping_price * 0.5)
+							WHEN topping_amount = 'regular' THEN (toppings.topping_price * 1)
+							WHEN topping_amount = 'extra' THEN (toppings.topping_price * 1.5)
+							WHEN topping_amount = 'double' THEN (toppings.topping_price * 2)
+							ELSE NULL
+							END AS topping_total
+				FROM pizza_toppings
+				JOIN toppings USING(topping_id)
+				ORDER BY pizza_id)
+                AS A USING(pizza_id)
+    GROUP BY order_id
+    ORDER BY order_id;
+-- Topping multiplier by topping amount
+SELECT
+	pizza_toppings.pizza_id AS pizza_id,
+	pizza_toppings.topping_id AS topping_id,
+	pizza_toppings.topping_amount AS topping_amount,
+		CASE
+			WHEN topping_amount = 'light' THEN (toppings.topping_price * 0.5)
+			WHEN topping_amount = 'regular' THEN (toppings.topping_price * 1)
+			WHEN topping_amount = 'extra' THEN (toppings.topping_price * 1.5)
+			WHEN topping_amount = 'double' THEN (toppings.topping_price * 2)
+			ELSE NULL
+			END AS topping_total
+FROM pizza_toppings
+	JOIN toppings USING(topping_id)
+ORDER BY pizza_id;
 
 -- ADVANCED: PIZZA DATABASE 2ND SET OF QUESTIONS (3) END --
 
