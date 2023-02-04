@@ -640,17 +640,39 @@ BREAK LINE FROM WORLD DATABASE QUESTIONS (6) TO WORLD DATABASE QUESTIONS (BONUS 
 
 -- WORLD DATABASE QUESTIONS (BONUS - 6) START --
 
+-- Not exactly sure what 'x' is besides being a NULL row...
+
 -- 1. Find all the countries whose local name is different from the official name
+SELECT Name AS official_name, LocalName AS local_name
+	FROM country
+    WHERE Name != LocalName
+    ORDER BY official_name;
 
 -- 2. How many countries have a life expectancy less than x?
+SELECT Name
+	FROM country
+    WHERE LifeExpectancy < (SELECT LifeExpectancy FROM country WHERE Name LIKE 'x');
 
 -- 3. What state is city x located in?
+-- No states are outlined in the world schema, thus unsure what to do here
 
 -- 4. What region of the world is city x located in?
+SELECT country.Region AS region
+	FROM country
+		JOIN city ON city.CountryCode = country.Code
+	WHERE city.Name = 'x';
 
 -- 5. What country (use the human readable name) city x located in?
+SELECT country.Name
+	FROM country
+		JOIN city ON city.CountryCode = country.Code
+	WHERE city.Name = 'x';
 
 -- 6. What is the life expectancy in city x?
+SELECT country.LifeExpectancy
+	FROM country
+		JOIN city ON city.CountryCode =  country.Code
+	WHERE city.Name = 'x';
 
 -- WORLD DATABASE QUESTIONS (BONUS - 6) END --
 
