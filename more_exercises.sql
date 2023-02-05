@@ -1136,14 +1136,164 @@ GROUP BY size
 ORDER BY total DESC;
 
 -- 6. How may large pizzas have olives on them?
+-- 1326 pizzas
+SELECT
+	COUNT(*) AS total
+FROM
+	pizzas
+		LEFT JOIN pizza_toppings USING(pizza_id)
+        LEFT JOIN sizes USING(size_id)
+WHERE 
+	pizza_toppings.topping_id = 7
+    AND sizes.size_id = 3;
 
 -- 7. What is the average number of toppings per pizza?
+-- 2 toppings/pizza on average
+SELECT
+	ROUND(AVG(total)) AS avg_toppings
+FROM
+	(SELECT
+		pizzas.pizza_id AS pizza_id,
+		COUNT(pizza_toppings.topping_id) AS total
+	FROM
+		pizzas
+			LEFT JOIN pizza_toppings USING(pizza_id)
+	GROUP BY pizza_id)
+    AS A;
 
 -- 8. What is the average number of pizzas per order?
+-- 2 pizzas/order on avg
+SELECT
+	ROUND(AVG(total)) AS avg_total
+FROM
+	(SELECT
+		order_id,
+		COUNT(pizza_id) AS total
+	FROM pizzas
+	GROUP BY order_id)
+    AS A;
 
 -- 9. What is the average pizza price?
+-- $14.39 average pizza price
+SELECT
+	ROUND(AVG(total), 2) AS avg_total
+FROM
+	(SELECT
+		A.pizza_id AS pizza_id,
+		A.modifier_id AS modifier_id,
+		SUM(COALESCE(A.cheese_cost, 0) + COALESCE(B.toppings_cost, 0) + COALESCE(C.size_cost, 0)) AS total
+	FROM
+		(SELECT
+			pizzas.pizza_id AS pizza_id,
+			pizza_modifiers.modifier_id,
+			CASE
+				WHEN pizza_modifiers.modifier_id = 1 THEN modifiers.modifier_price
+				WHEN pizza_modifiers.modifier_id = 2 THEN modifiers.modifier_price
+				WHEN pizza_modifiers.modifier_id = 3 THEN modifiers.modifier_price
+				ELSE NULL
+				END
+				AS cheese_cost
+		FROM
+			pizzas
+				LEFT JOIN pizza_modifiers USING(pizza_id)
+				LEFT JOIN modifiers USING(modifier_id)) AS A
+			LEFT JOIN
+				(SELECT 
+					pizzas.pizza_id AS pizza_id,
+					ROUND(SUM(CASE
+						WHEN pizza_toppings.topping_amount = 'light' THEN (toppings.topping_price * 0.5)
+						WHEN pizza_toppings.topping_amount = 'regular' THEN (toppings.topping_price * 1)
+						WHEN pizza_toppings.topping_amount = 'extra' THEN (toppings.topping_price * 1.5)
+						WHEN pizza_toppings.topping_amount = 'double' THEN (toppings.topping_price * 2)
+						ELSE NULL
+						END), 2)
+						AS toppings_cost
+				FROM
+					pizzas
+						LEFT JOIN pizza_toppings USING(pizza_id)
+						LEFT JOIN toppings USING(topping_id)
+				GROUP BY pizza_id
+				ORDER BY pizza_id) 
+				AS B USING(pizza_id)
+			LEFT JOIN
+				(SELECT 
+					pizzas.pizza_id,
+					CASE
+						WHEN sizes.size_name = 'small' THEN sizes.size_price
+						WHEN sizes.size_name = 'medium' THEN sizes.size_price
+						WHEN sizes.size_name = 'large' THEN sizes.size_price
+						WHEN sizes.size_name = 'x-large' THEN sizes.size_price
+						ELSE NULL
+						END
+						AS size_cost
+				FROM
+					pizzas
+						LEFT JOIN sizes USING(size_id)
+				ORDER BY pizza_id) 
+				AS C USING(pizza_id)
+		GROUP BY pizza_id, modifier_id
+		ORDER BY pizza_id)
+        AS A;
 
 -- 10. What is the average order total?
+-- $28.77 / order on average
+SELECT
+	ROUND(AVG(total), 2) AS avg_total
+FROM
+	(SELECT
+		A.order_id AS order_id,
+		SUM(COALESCE(A.cheese_cost, 0) + COALESCE(B.toppings_cost, 0) + COALESCE(C.size_cost, 0)) AS total
+	FROM
+		(SELECT
+			pizzas.order_id AS order_id,
+			pizzas.pizza_id AS pizza_id,
+			pizza_modifiers.modifier_id,
+			CASE
+				WHEN pizza_modifiers.modifier_id = 1 THEN modifiers.modifier_price
+				WHEN pizza_modifiers.modifier_id = 2 THEN modifiers.modifier_price
+				WHEN pizza_modifiers.modifier_id = 3 THEN modifiers.modifier_price
+				ELSE NULL
+				END
+				AS cheese_cost
+		FROM
+			pizzas
+				LEFT JOIN pizza_modifiers USING(pizza_id)
+				LEFT JOIN modifiers USING(modifier_id)) AS A
+			LEFT JOIN
+				(SELECT 
+					pizzas.pizza_id AS pizza_id,
+					ROUND(SUM(CASE
+						WHEN pizza_toppings.topping_amount = 'light' THEN (toppings.topping_price * 0.5)
+						WHEN pizza_toppings.topping_amount = 'regular' THEN (toppings.topping_price * 1)
+						WHEN pizza_toppings.topping_amount = 'extra' THEN (toppings.topping_price * 1.5)
+						WHEN pizza_toppings.topping_amount = 'double' THEN (toppings.topping_price * 2)
+						ELSE NULL
+						END), 2)
+						AS toppings_cost
+				FROM
+					pizzas
+						LEFT JOIN pizza_toppings USING(pizza_id)
+						LEFT JOIN toppings USING(topping_id)
+				GROUP BY pizza_id
+				ORDER BY pizza_id) 
+				AS B USING(pizza_id)
+			LEFT JOIN
+				(SELECT pizzas.pizza_id,
+					CASE
+						WHEN sizes.size_name = 'small' THEN sizes.size_price
+						WHEN sizes.size_name = 'medium' THEN sizes.size_price
+						WHEN sizes.size_name = 'large' THEN sizes.size_price
+						WHEN sizes.size_name = 'x-large' THEN sizes.size_price
+						ELSE NULL
+						END
+						AS size_cost
+				FROM
+					pizzas
+						LEFT JOIN sizes USING(size_id)
+				ORDER BY pizza_id) 
+				AS C USING(pizza_id)
+		GROUP BY order_id)
+        AS A;
 
 -- 11. What is the average number of items per order?
 
