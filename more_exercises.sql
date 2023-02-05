@@ -1038,11 +1038,102 @@ GROUP BY topping
 ORDER BY total DESC;
 
 -- 4. How many pizzas are only cheese (i.e. have no toppings)?
-SELECT pizzas.pizza_id, pizza_toppings.topping_id FROM pizzas
-LEFT JOIN pizza_toppings USING(pizza_id);
+-- 2548 pizzas
+SELECT
+	COUNT(*) AS total
+FROM
+	(SELECT
+		pizzas.pizza_id AS pizza_id,
+		pizza_toppings.topping_id AS topping_id
+	FROM 
+		pizzas 
+			LEFT JOIN pizza_toppings USING(pizza_id))
+	AS A
+WHERE topping_id IS NULL;
 
 /* 5. How many orders consist of pizza(s) that are only cheese? What is the average price 
 of these orders? The most common pizza size?*/
+-- 2548 only cheese pizza
+-- $14.23 avg for only cheese pizza
+-- Large: 577 pizzas
+SELECT
+	ROUND(AVG(total), 2)
+FROM
+	(SELECT
+		A.pizza_id AS pizza_id,
+		A.modifier_id AS modifier_id,
+		SUM(COALESCE(A.cheese_cost, 0) + COALESCE(B.toppings_cost, 0) + COALESCE(C.size_cost, 0)) AS total
+	FROM
+		(SELECT
+			pizzas.pizza_id AS pizza_id,
+			pizza_modifiers.modifier_id,
+			CASE
+				WHEN pizza_modifiers.modifier_id = 1 THEN modifiers.modifier_price
+				WHEN pizza_modifiers.modifier_id = 2 THEN modifiers.modifier_price
+				WHEN pizza_modifiers.modifier_id = 3 THEN modifiers.modifier_price
+				ELSE NULL
+				END
+				AS cheese_cost
+		FROM
+			pizzas
+				LEFT JOIN pizza_modifiers USING(pizza_id)
+				LEFT JOIN modifiers USING(modifier_id)) AS A
+		LEFT JOIN
+			(SELECT 
+				pizzas.pizza_id AS pizza_id,
+				ROUND(SUM(CASE
+					WHEN pizza_toppings.topping_amount = 'light' THEN (toppings.topping_price * 0.5)
+					WHEN pizza_toppings.topping_amount = 'regular' THEN (toppings.topping_price * 1)
+					WHEN pizza_toppings.topping_amount = 'extra' THEN (toppings.topping_price * 1.5)
+					WHEN pizza_toppings.topping_amount = 'double' THEN (toppings.topping_price * 2)
+					ELSE NULL
+					END), 2)
+					AS toppings_cost
+			FROM
+				pizzas
+					LEFT JOIN pizza_toppings USING(pizza_id)
+					LEFT JOIN toppings USING(topping_id)
+			GROUP BY pizza_id
+			ORDER BY pizza_id) 
+			AS B USING(pizza_id)
+		LEFT JOIN
+			(SELECT 
+				pizzas.pizza_id,
+				CASE
+					WHEN sizes.size_name = 'small' THEN sizes.size_price
+					WHEN sizes.size_name = 'medium' THEN sizes.size_price
+					WHEN sizes.size_name = 'large' THEN sizes.size_price
+					WHEN sizes.size_name = 'x-large' THEN sizes.size_price
+					ELSE NULL
+					END
+					AS size_cost
+			FROM
+				pizzas
+					LEFT JOIN sizes USING(size_id)
+			ORDER BY pizza_id) 
+			AS C USING(pizza_id)
+	GROUP BY pizza_id, modifier_id
+	ORDER BY pizza_id) AS A
+WHERE A.modifier_id = 3;
+-- Size of no cheese pizza
+SELECT
+	size_name AS size,
+    COUNT(size_id) AS total
+FROM
+	(SELECT
+		pizzas.pizza_id AS pizza_id,
+		sizes.size_name AS size_name,
+        sizes.size_id AS size_id,
+        pizza_modifiers.modifier_id AS modifier_id
+	FROM
+		pizzas
+			LEFT JOIN sizes USING(size_id)
+            LEFT JOIN pizza_modifiers USING(pizza_id)
+            LEFT JOIN modifiers USING(modifier_id))
+	AS A
+WHERE modifier_id = 3
+GROUP BY size
+ORDER BY total DESC;
 
 -- 6. How may large pizzas have olives on them?
 
