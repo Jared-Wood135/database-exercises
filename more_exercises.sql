@@ -1010,8 +1010,19 @@ FROM
 	GROUP BY pizza_id, modifier_id) AS A
 WHERE A.modifier_id = COALESCE(A.modifier_id, 0);
 
-
 -- 2. What is the most common size for pizzas that have extra cheese?
+-- Medium: 575
+USE pizza;
+SELECT 
+	sizes.size_name AS size, 
+	COUNT(pizza_modifiers.modifier_id) AS total
+FROM
+	sizes
+		LEFT JOIN pizzas USING(size_id)
+        LEFT JOIN pizza_modifiers USING(pizza_id)
+WHERE pizza_modifiers.modifier_id = 1
+GROUP BY size
+ORDER BY total DESC;
 
 -- 3. What is the most common topping for pizzas that are well done?
 
