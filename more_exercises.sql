@@ -841,6 +841,7 @@ BREAK LINE FROM ADVANCED: PIZZA DATABASE 2ND SET OF QUESTIONS (3) TO ADDITIONAL 
 -- ADDITIONAL QUESTIONS (20) START --
 
 -- 1. What is the average price of pizzas that have no cheese?
+-- $14.89 avg price of pizzas with no cheese (Includes size and topping price)
 /*
 modifiers & pizza_modifies = Cheese Price
 	modifiers -> modifier_id, modifier_name, modifier_price
@@ -900,10 +901,12 @@ ORDER BY pizza_id;
 -- PRICE by pizza_id
 SELECT
 	A.pizza_id AS pizza_id,
+    A.modifier_id AS modifier_id,
     SUM(COALESCE(A.cheese_cost, 0) + COALESCE(B.toppings_cost, 0) + COALESCE(C.size_cost, 0)) AS total
 FROM
 	(SELECT
 	pizzas.pizza_id AS pizza_id,
+    pizza_modifiers.modifier_id,
 	CASE
 			WHEN pizza_modifiers.modifier_id = 1 THEN modifiers.modifier_price
             WHEN pizza_modifiers.modifier_id = 2 THEN modifiers.modifier_price
@@ -947,69 +950,65 @@ FROM
 				LEFT JOIN sizes USING(size_id)
 		ORDER BY pizza_id) 
         AS C USING(pizza_id)
-GROUP BY pizza_id
+GROUP BY pizza_id, modifier_id
 ORDER BY pizza_id;
 -- AVG COST OF PIZZA W/ NO CHEESE
 SELECT
-	AVG(A.total)
+	ROUND(AVG(A.total), 2)
 FROM
 	(SELECT
-		A.pizza_id AS pizza_id,
-        A.modifier_id AS modifier_id,
-		SUM(COALESCE(A.cheese_cost, 0) + COALESCE(B.toppings_cost, 0) + COALESCE(C.size_cost, 0)) AS total
-	FROM
-		(SELECT
+	A.pizza_id AS pizza_id,
+    A.modifier_id AS modifier_id,
+    SUM(COALESCE(A.cheese_cost, 0) + COALESCE(B.toppings_cost, 0) + COALESCE(C.size_cost, 0)) AS total
+FROM
+	(SELECT
 		pizzas.pizza_id AS pizza_id,
-        pizza_modifiers.modifier_id AS modifier_id,
-			CASE
-				WHEN pizza_modifiers.modifier_id = 1 THEN modifiers.modifier_price
-				WHEN pizza_modifiers.modifier_id = 2 THEN modifiers.modifier_price
-				WHEN pizza_modifiers.modifier_id = 3 THEN modifiers.modifier_price
-				ELSE NULL
-				END
-				AS cheese_cost
-		FROM
-			pizzas
-				LEFT JOIN pizza_modifiers USING(pizza_id)
-				LEFT JOIN modifiers USING(modifier_id)) AS A
-		LEFT JOIN
-			(SELECT 
-				pizzas.pizza_id AS pizza_id,
-				ROUND(SUM(CASE
-					WHEN pizza_toppings.topping_amount = 'light' THEN (toppings.topping_price * 0.5)
-					WHEN pizza_toppings.topping_amount = 'regular' THEN (toppings.topping_price * 1)
-					WHEN pizza_toppings.topping_amount = 'extra' THEN (toppings.topping_price * 1.5)
-					WHEN pizza_toppings.topping_amount = 'double' THEN (toppings.topping_price * 2)
-					ELSE NULL
-					END), 2)
-					AS toppings_cost
-			FROM
-				pizzas
-					LEFT JOIN pizza_toppings USING(pizza_id)
-					LEFT JOIN toppings USING(topping_id)
-			GROUP BY pizza_id
-			ORDER BY pizza_id) 
-			AS B USING(pizza_id)
-		LEFT JOIN
-			(SELECT pizzas.pizza_id,
-				CASE
-					WHEN sizes.size_name = 'small' THEN sizes.size_price
-					WHEN sizes.size_name = 'medium' THEN sizes.size_price
-					WHEN sizes.size_name = 'large' THEN sizes.size_price
-					WHEN sizes.size_name = 'x-large' THEN sizes.size_price
-					ELSE NULL
-					END
-					AS size_cost
-			FROM
-				pizzas
-					LEFT JOIN sizes USING(size_id)
-			ORDER BY pizza_id) 
-			AS C USING(pizza_id)
-	GROUP BY pizza_id
-	ORDER BY pizza_id)
-    AS A
-WHERE A.modifier_id = 3
-GROUP BY ;
+		pizza_modifiers.modifier_id AS modifier_id,
+		CASE
+			WHEN pizza_modifiers.modifier_id = 1 THEN modifiers.modifier_price
+            WHEN pizza_modifiers.modifier_id = 2 THEN modifiers.modifier_price
+            WHEN pizza_modifiers.modifier_id = 3 THEN modifiers.modifier_price
+            ELSE NULL
+            END
+            AS cheese_cost
+	FROM
+		pizzas
+			LEFT JOIN pizza_modifiers USING(pizza_id)
+			LEFT JOIN modifiers USING(modifier_id)) AS A
+			LEFT JOIN
+				(SELECT pizzas.pizza_id AS pizza_id,
+					ROUND(SUM(CASE
+						WHEN pizza_toppings.topping_amount = 'light' THEN (toppings.topping_price * 0.5)
+						WHEN pizza_toppings.topping_amount = 'regular' THEN (toppings.topping_price * 1)
+						WHEN pizza_toppings.topping_amount = 'extra' THEN (toppings.topping_price * 1.5)
+						WHEN pizza_toppings.topping_amount = 'double' THEN (toppings.topping_price * 2)
+						ELSE NULL
+						END), 2)
+						AS toppings_cost
+				FROM
+					pizzas
+						LEFT JOIN pizza_toppings USING(pizza_id)
+						LEFT JOIN toppings USING(topping_id)
+				GROUP BY pizza_id
+				ORDER BY pizza_id) 
+				AS B USING(pizza_id)
+			LEFT JOIN
+				(SELECT pizzas.pizza_id,
+					CASE
+						WHEN sizes.size_name = 'small' THEN sizes.size_price
+						WHEN sizes.size_name = 'medium' THEN sizes.size_price
+						WHEN sizes.size_name = 'large' THEN sizes.size_price
+						WHEN sizes.size_name = 'x-large' THEN sizes.size_price
+						ELSE NULL
+						END
+						AS size_cost
+				FROM
+					pizzas
+						LEFT JOIN sizes USING(size_id)
+				ORDER BY pizza_id) 
+				AS C USING(pizza_id)
+	GROUP BY pizza_id, modifier_id) AS A
+WHERE A.modifier_id = COALESCE(A.modifier_id, 0);
 
 
 -- 2. What is the most common size for pizzas that have extra cheese?
