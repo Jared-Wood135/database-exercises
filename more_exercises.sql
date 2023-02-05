@@ -1025,8 +1025,21 @@ GROUP BY size
 ORDER BY total DESC;
 
 -- 3. What is the most common topping for pizzas that are well done?
+-- Bacon: 618
+SELECT
+	toppings.topping_name AS topping,
+    COUNT(pizza_toppings.topping_id) AS total
+FROM toppings
+	LEFT JOIN pizza_toppings USING(topping_id)
+    LEFT JOIN pizza_modifiers USING(pizza_id)
+    LEFT JOIN modifiers USING(modifier_id)
+WHERE pizza_modifiers.modifier_id = 2
+GROUP BY topping
+ORDER BY total DESC;
 
 -- 4. How many pizzas are only cheese (i.e. have no toppings)?
+SELECT pizzas.pizza_id, pizza_toppings.topping_id FROM pizzas
+LEFT JOIN pizza_toppings USING(pizza_id);
 
 /* 5. How many orders consist of pizza(s) that are only cheese? What is the average price 
 of these orders? The most common pizza size?*/
