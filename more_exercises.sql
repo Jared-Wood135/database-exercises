@@ -1480,8 +1480,76 @@ GROUP BY order_id, pizza_id
 ORDER BY pizza_id;
 
 -- 14. What is the most common pizza size for orders that contain only a single pizza?
+/*
+LARGE: 952
+X-LARGE: 922
+MEDIUM: 919
+SMALL: 916
+*/
+SELECT
+	sizes.size_name AS size,
+    COUNT(pizza_id) AS total
+FROM
+	pizzas
+		LEFT JOIN
+			sizes USING(size_id)
+		LEFT JOIN
+			(SELECT
+				order_id,
+				COUNT(pizza_id) AS pizzas
+			FROM
+				pizzas
+			GROUP BY order_id
+			HAVING pizzas = 1)
+			AS A USING(order_id)
+WHERE A.pizzas = 1
+GROUP BY size
+ORDER BY total DESC;
 
 -- 15. How many orders consist of 3+ pizzas? What is the average number of toppings for these orders?
+/*
+Orders w/ 3+ toppings: 6972
+Avg toppings for these: 6.28
+*/
+-- AVG toppings for orders with 3+ toppings
+SELECT
+	ROUND(AVG(total_topping), 2) AS avg_topping
+FROM
+	(SELECT
+		pizzas.order_id AS order_id,
+		COUNT(pizza_toppings.topping_id) AS total_topping
+	FROM
+		pizzas
+		LEFT JOIN
+			pizza_toppings USING(pizza_id)
+	GROUP BY order_id
+	HAVING total_topping >= 3)
+    AS A;
+    
+-- Total orders with 3+ toppings
+SELECT
+	COUNT(*)
+FROM
+	(SELECT
+		pizzas.order_id AS order_id,
+		COUNT(pizza_toppings.topping_id) AS total_topping
+	FROM
+		pizzas
+		LEFT JOIN
+			pizza_toppings USING(pizza_id)
+	GROUP BY order_id
+	HAVING total_topping >= 3)
+    AS A;
+-- Orders with 3+ toppings
+SELECT
+	pizzas.order_id AS order_id,
+    COUNT(pizza_toppings.topping_id) AS total_topping
+FROM
+	pizzas
+	LEFT JOIN
+		pizza_toppings USING(pizza_id)
+GROUP BY order_id
+HAVING total_topping >= 3;
 
 -- 16. What is the most common topping on large and extra large pizzas?
 
