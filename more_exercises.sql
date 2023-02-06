@@ -1296,8 +1296,51 @@ FROM
         AS A;
 
 -- 11. What is the average number of items per order?
+-- 2 items/order on avg
+SELECT
+	ROUND(AVG(total), 2) AS avg_total
+FROM
+	(SELECT
+		order_id,
+		COUNT(pizza_id) AS total
+	FROM
+		pizzas
+	GROUP BY order_id
+	ORDER BY order_id)
+    AS A;
 
 -- 12. What is the average number of toppings per pizza for each size of pizza?
+/*
+SMALL: 2.36
+MEDIUM: 2.37
+LARGE: 2.37
+X-LARGE: 2.44
+*/
+-- toppings by pizza
+SELECT
+	pizzas.pizza_id AS pizza_id,
+	COUNT(pizza_toppings.topping_id) AS toppings_total
+FROM
+	pizzas
+		LEFT JOIN pizza_toppings USING(pizza_id)
+GROUP BY pizza_id;
+-- toppings by size
+SELECT
+	sizes.size_name AS size,
+    ROUND(AVG(A.toppings_total), 2) AS avg_toppings
+FROM
+	sizes
+		LEFT JOIN pizzas USING(size_id)
+        LEFT JOIN
+			(SELECT
+				pizzas.pizza_id AS pizza_id,
+				COUNT(pizza_toppings.topping_id) AS toppings_total
+			FROM
+				pizzas
+					LEFT JOIN pizza_toppings USING(pizza_id)
+			GROUP BY pizza_id)
+            AS A USING(pizza_id)
+GROUP BY size;
 
 -- 13. What is the average order total for orders that contain more than 1 pizza?
 
