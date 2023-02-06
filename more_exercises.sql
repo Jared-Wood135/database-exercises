@@ -1552,9 +1552,55 @@ GROUP BY order_id
 HAVING total_topping >= 3;
 
 -- 16. What is the most common topping on large and extra large pizzas?
+/*
+Large: Pepperoni(1364)
+X-Large: Canadian Bacon(1401)
+*/
+SELECT
+	*
+FROM
+	(SELECT
+		toppings.topping_name AS topping,
+		COUNT(pizza_toppings.topping_id) AS X_LARGE
+	FROM
+		toppings
+		LEFT JOIN
+			pizza_toppings USING(topping_id)
+		LEFT JOIN
+			pizzas USING(pizza_id)
+	WHERE pizzas.size_id = 4
+	GROUP BY topping)
+    AS A
+	JOIN
+		(SELECT
+			toppings.topping_name AS topping,
+			COUNT(pizza_toppings.topping_id) AS LARGE
+		FROM
+			toppings
+			LEFT JOIN
+				pizza_toppings USING(topping_id)
+			LEFT JOIN
+				pizzas USING(pizza_id)
+		WHERE pizzas.size_id = 3
+		GROUP BY topping)
+        AS B USING(topping)
+ORDER BY topping;
+-- Toppings by X-Large
 SELECT
 	toppings.topping_name AS topping,
-    COUNT(pizza_toppings.topping_id) AS total
+	COUNT(pizza_toppings.topping_id) AS X_LARGE
+FROM
+	toppings
+    LEFT JOIN
+		pizza_toppings USING(topping_id)
+	LEFT JOIN
+		pizzas USING(pizza_id)
+WHERE pizzas.size_id = 4
+GROUP BY topping;
+-- Toppings by Large
+SELECT
+	toppings.topping_name AS topping,
+    COUNT(pizza_toppings.topping_id) AS LARGE
 FROM
 	toppings
 	LEFT JOIN
@@ -1562,14 +1608,223 @@ FROM
 	LEFT JOIN
 		pizzas USING(pizza_id)
 WHERE pizzas.size_id = 3
-GROUP BY topping
+GROUP BY topping;
 
 -- 17. What is the most common topping for orders that consist of 2 pizzas?
+-- Canadian Bacon: 1994
+SELECT
+	toppings.topping_name AS topping,
+    COUNT(toppings.topping_id) AS total
+FROM pizza_toppings
+	LEFT JOIN
+		toppings USING(topping_id)
+	LEFT JOIN
+		pizzas USING(pizza_id)
+	LEFT JOIN
+		(SELECT
+			order_id,
+			COUNT(pizza_id) AS total
+		FROM
+			pizzas
+		GROUP BY order_id
+		HAVING total = 2)
+        AS A USING(order_id)
+WHERE A.total = 2
+GROUP BY topping
+ORDER BY total DESC;
+-- Orders with 2 pizzas
+SELECT
+	order_id,
+    COUNT(pizza_id) AS total
+FROM
+	pizzas
+GROUP BY order_id
+HAVING total = 2;
 
 -- 18. Which size of pizza most frequently has modifiers?
+/*
+Large: 1714
+X-Large: 1652
+Medium: 1637
+Small: 1582
+*/
+SELECT
+	sizes.size_name AS size,
+    COUNT(pizza_id) AS total
+FROM
+	sizes
+    LEFT JOIN
+		pizzas USING(size_id)
+	LEFT JOIN
+		pizza_modifiers USING(pizza_id)
+WHERE pizza_modifiers.modifier_id IN(1, 2, 3)
+GROUP BY size
+ORDER BY total DESC;
 
 -- 19. What percentage of pizzas with hot sauce have extra cheese?
+-- Pizzas with hot sauce and extra cheese
+SELECT
+	COUNT(pizzas.pizza_id) AS total
+FROM
+	pizzas
+	LEFT JOIN
+		pizza_toppings USING(pizza_id)
+	LEFT JOIN
+		pizza_modifiers USING(pizza_id)
+WHERE pizza_modifiers.modifier_id = 1
+	AND pizza_toppings.topping_id = 9;
+-- Percent of pizzas with hot sauce and extra cheese
+-- 3% of all pizzas are hot sauce AND extra cheese
+SELECT
+	ROUND(
+		(SELECT
+			COUNT(pizzas.pizza_id) AS total
+		FROM
+			pizzas
+			LEFT JOIN
+				pizza_toppings USING(pizza_id)
+			LEFT JOIN
+				pizza_modifiers USING(pizza_id)
+		WHERE pizza_modifiers.modifier_id = 1
+			AND pizza_toppings.topping_id = 9)
+		/
+		(SELECT
+			COUNT(*)
+		FROM
+			pizzas), 2)
+	AS total_percent;
 
 -- 20. What is the average order price for orders that have at least 1 pizza with pineapple?
+-- $35.24 avg order price for orders with at least 1 pizza w/ pineapple
+-- Prices of orders with pizzas with pineaple
+SELECT
+	ROUND(AVG(B.total), 2) AS avg_total
+FROM
+	(SELECT DISTINCT
+		pizzas.order_id AS order_id
+	FROM
+		pizzas
+		LEFT JOIN
+			pizza_toppings USING(pizza_id)
+	WHERE pizza_toppings.topping_id = 8)
+    AS A
+    LEFT JOIN
+		(SELECT
+			A.order_id AS order_id,
+			SUM(COALESCE(A.cheese_cost, 0) + COALESCE(B.toppings_cost, 0) + COALESCE(C.size_cost, 0)) AS total
+		FROM
+			(SELECT
+				pizzas.pizza_id AS pizza_id,
+				pizzas.order_id AS order_id,
+				pizza_modifiers.modifier_id,
+				CASE
+					WHEN pizza_modifiers.modifier_id = 1 THEN modifiers.modifier_price
+					WHEN pizza_modifiers.modifier_id = 2 THEN modifiers.modifier_price
+					WHEN pizza_modifiers.modifier_id = 3 THEN modifiers.modifier_price
+					ELSE NULL
+					END
+					AS cheese_cost
+			FROM
+				pizzas
+				LEFT JOIN pizza_modifiers USING(pizza_id)
+				LEFT JOIN modifiers USING(modifier_id)) AS A
+		LEFT JOIN
+			(SELECT 
+				pizzas.pizza_id AS pizza_id,
+				ROUND(SUM(CASE
+					WHEN pizza_toppings.topping_amount = 'light' THEN (toppings.topping_price * 0.5)
+					WHEN pizza_toppings.topping_amount = 'regular' THEN (toppings.topping_price * 1)
+					WHEN pizza_toppings.topping_amount = 'extra' THEN (toppings.topping_price * 1.5)
+					WHEN pizza_toppings.topping_amount = 'double' THEN (toppings.topping_price * 2)
+					ELSE NULL
+					END), 2)
+					AS toppings_cost
+			FROM
+				pizzas
+				LEFT JOIN pizza_toppings USING(pizza_id)
+				LEFT JOIN toppings USING(topping_id)
+			GROUP BY pizza_id
+			ORDER BY pizza_id) 
+			AS B USING(pizza_id)
+		LEFT JOIN
+			(SELECT pizzas.pizza_id,
+				CASE
+					WHEN sizes.size_name = 'small' THEN sizes.size_price
+					WHEN sizes.size_name = 'medium' THEN sizes.size_price
+					WHEN sizes.size_name = 'large' THEN sizes.size_price
+					WHEN sizes.size_name = 'x-large' THEN sizes.size_price
+					ELSE NULL
+					END
+					AS size_cost
+			FROM
+				pizzas
+				LEFT JOIN sizes USING(size_id)
+			ORDER BY pizza_id) 
+			AS C USING(pizza_id)
+	GROUP BY order_id)
+    AS B USING(order_id)
+WHERE order_id IN(B.order_id);
+-- Orders with pineapple
+SELECT DISTINCT
+	pizzas.order_id AS order_id
+FROM
+	pizzas
+	LEFT JOIN
+		pizza_toppings USING(pizza_id)
+WHERE pizza_toppings.topping_id = 8;
+-- Price by order_id
+SELECT
+    A.order_id AS order_id,
+    SUM(COALESCE(A.cheese_cost, 0) + COALESCE(B.toppings_cost, 0) + COALESCE(C.size_cost, 0)) AS total
+FROM
+	(SELECT
+	pizzas.pizza_id AS pizza_id,
+    pizzas.order_id AS order_id,
+    pizza_modifiers.modifier_id,
+	CASE
+			WHEN pizza_modifiers.modifier_id = 1 THEN modifiers.modifier_price
+            WHEN pizza_modifiers.modifier_id = 2 THEN modifiers.modifier_price
+            WHEN pizza_modifiers.modifier_id = 3 THEN modifiers.modifier_price
+            ELSE NULL
+            END
+            AS cheese_cost
+	FROM
+		pizzas
+			LEFT JOIN pizza_modifiers USING(pizza_id)
+			LEFT JOIN modifiers USING(modifier_id)) AS A
+	LEFT JOIN
+		(SELECT 
+			pizzas.pizza_id AS pizza_id,
+			ROUND(SUM(CASE
+				WHEN pizza_toppings.topping_amount = 'light' THEN (toppings.topping_price * 0.5)
+				WHEN pizza_toppings.topping_amount = 'regular' THEN (toppings.topping_price * 1)
+				WHEN pizza_toppings.topping_amount = 'extra' THEN (toppings.topping_price * 1.5)
+				WHEN pizza_toppings.topping_amount = 'double' THEN (toppings.topping_price * 2)
+				ELSE NULL
+				END), 2)
+				AS toppings_cost
+		FROM
+			pizzas
+				LEFT JOIN pizza_toppings USING(pizza_id)
+				LEFT JOIN toppings USING(topping_id)
+		GROUP BY pizza_id
+		ORDER BY pizza_id) 
+        AS B USING(pizza_id)
+	LEFT JOIN
+		(SELECT pizzas.pizza_id,
+			CASE
+				WHEN sizes.size_name = 'small' THEN sizes.size_price
+				WHEN sizes.size_name = 'medium' THEN sizes.size_price
+				WHEN sizes.size_name = 'large' THEN sizes.size_price
+				WHEN sizes.size_name = 'x-large' THEN sizes.size_price
+				ELSE NULL
+				END
+				AS size_cost
+		FROM
+			pizzas
+				LEFT JOIN sizes USING(size_id)
+		ORDER BY pizza_id) 
+        AS C USING(pizza_id)
+GROUP BY order_id;
 
 -- ADDITIONAL QUESTIONS (20) END --
