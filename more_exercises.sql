@@ -1552,6 +1552,17 @@ GROUP BY order_id
 HAVING total_topping >= 3;
 
 -- 16. What is the most common topping on large and extra large pizzas?
+SELECT
+	toppings.topping_name AS topping,
+    COUNT(pizza_toppings.topping_id) AS total
+FROM
+	toppings
+	LEFT JOIN
+		pizza_toppings USING(topping_id)
+	LEFT JOIN
+		pizzas USING(pizza_id)
+WHERE pizzas.size_id = 3
+GROUP BY topping
 
 -- 17. What is the most common topping for orders that consist of 2 pizzas?
 
