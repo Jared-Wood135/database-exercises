@@ -1,2 +1,2 @@
 # database-exercises
-Codeup repository for database exercises.
+Database exercises from Codeup curriculum.
